@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - The Farhan World</title>
+    <title>Dashboard - The Farhan World</title>
     <style>
         * {
             margin: 0;
@@ -27,6 +27,19 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .header h1 {
+            color: #1a1a2e;
+        }
+        .logout-btn {
+            background: #c0392b;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
         }
         .stats {
             display: grid;
@@ -39,28 +52,50 @@
             padding: 25px;
             border-radius: 10px;
             text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .stat-card h3 {
+            font-size: 28px;
+            margin-top: 10px;
+        }
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
         }
         .btn {
-            padding: 10px 20px;
+            padding: 12px 24px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             text-decoration: none;
             display: inline-block;
+            font-weight: 600;
         }
         .btn-primary {
             background: #c0392b;
             color: white;
         }
-        .btn-danger {
-            background: #e74c3c;
+        .btn-info {
+            background: #3498db;
             color: white;
+        }
+        .posts-section, .social-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .posts-section h2, .social-section h2 {
+            margin-bottom: 20px;
         }
         table {
             width: 100%;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
+            border-collapse: collapse;
+            overflow-x: auto;
+            display: block;
         }
         th, td {
             padding: 12px;
@@ -77,8 +112,14 @@
             cursor: pointer;
             margin: 0 3px;
         }
-        .edit-btn { background: #3498db; color: white; }
-        .delete-btn { background: #e74c3c; color: white; }
+        .edit-btn {
+            background: #3498db;
+            color: white;
+        }
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+        }
         .post-form {
             background: white;
             padding: 25px;
@@ -87,21 +128,16 @@
         }
         .post-form input, .post-form select, .post-form textarea {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin-bottom: 15px;
             border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: 6px;
+            font-size: 14px;
         }
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
-        }
-        .section {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
         }
         .social-form {
             display: grid;
@@ -123,6 +159,12 @@
             .social-form button {
                 grid-column: span 1;
             }
+            table {
+                font-size: 12px;
+            }
+            th, td {
+                padding: 8px;
+            }
         }
     </style>
 </head>
@@ -130,14 +172,30 @@
     <div class="container">
         <div class="header">
             <h1>📊 Admin Dashboard</h1>
-            <button class="btn btn-danger" onclick="logout()">Logout</button>
+            <button class="logout-btn" onclick="logout()">🚪 Logout</button>
         </div>
 
         <div class="stats">
-            <div class="stat-card"><h2 id="totalPosts">0</h2><p>Total Posts</p></div>
-            <div class="stat-card"><h2>1</h2><p>Admin</p></div>
-            <div class="stat-card"><h2>100%</h2><p>Status</p></div>
-            <div class="stat-card"><h2>🔥</h2><p>Active</p></div>
+            <div class="stat-card">
+                <div>📰</div>
+                <h3 id="totalPosts">0</h3>
+                <p>Total Posts</p>
+            </div>
+            <div class="stat-card">
+                <div>👁️</div>
+                <h3 id="totalViews">0</h3>
+                <p>Total Views</p>
+            </div>
+            <div class="stat-card">
+                <div>👤</div>
+                <h3>1</h3>
+                <p>Admin</p>
+            </div>
+            <div class="stat-card">
+                <div>📈</div>
+                <h3>100%</h3>
+                <p>Status</p>
+            </div>
         </div>
 
         <div class="post-form">
@@ -162,12 +220,12 @@
             </form>
         </div>
 
-        <div class="section">
+        <div class="posts-section">
             <h2>📋 Manage Posts</h2>
             <div id="postsList">Loading...</div>
         </div>
 
-        <div class="section">
+        <div class="social-section">
             <h2>🔗 Social Media Links</h2>
             <form id="socialForm" class="social-form">
                 <input type="url" id="facebook" placeholder="Facebook URL">
@@ -194,20 +252,26 @@
         async function loadPosts() {
             currentPosts = await getPosts();
             document.getElementById('totalPosts').textContent = currentPosts.length;
-            const tbody = document.getElementById('postsList');
+            const totalViews = currentPosts.reduce((sum, p) => sum + (p.views || 0), 0);
+            document.getElementById('totalViews').textContent = totalViews;
+            
+            const container = document.getElementById('postsList');
             if (currentPosts.length === 0) {
-                tbody.innerHTML = '<p>No posts yet. Create one above!</p>';
+                container.innerHTML = '<p>No posts yet. Create one above!</p>';
                 return;
             }
-            tbody.innerHTML = `
+            container.innerHTML = `
                 <table>
-                    <thead><tr><th>Headline</th><th>Category</th><th>Date</th><th>Actions</th></tr></thead>
+                    <thead>
+                        <tr><th>Headline</th><th>Category</th><th>Date</th><th>Views</th><th>Actions</th></tr>
+                    </thead>
                     <tbody>
                         ${currentPosts.map(post => `
                             <tr>
                                 <td><strong>${post.headline}</strong></td>
                                 <td>${post.category}</td>
                                 <td>${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString() : 'New'}</td>
+                                <td>${post.views || 0}</td>
                                 <td><button class="delete-btn" onclick="deletePostById('${post.id}')">Delete</button></td>
                             </tr>
                         `).join('')}
