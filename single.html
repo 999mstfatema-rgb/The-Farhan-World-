@@ -5,24 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Post - The Farhan World</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
         body {
             font-family: Arial, sans-serif;
             background: #f0f2f5;
+            padding: 20px;
         }
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 40px 20px;
         }
         .post-card {
             background: white;
-            border-radius: 16px;
-            padding: 40px;
+            border-radius: 10px;
+            padding: 30px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         .category {
@@ -35,7 +30,6 @@
         }
         h1 {
             margin: 15px 0;
-            font-size: 32px;
         }
         .meta {
             color: #666;
@@ -50,7 +44,6 @@
         .content {
             line-height: 1.8;
             font-size: 18px;
-            margin-top: 20px;
         }
         .back-btn {
             display: inline-block;
@@ -58,12 +51,10 @@
             color: #c0392b;
             text-decoration: none;
         }
-        .loading, .error {
-            text-align: center;
-            padding: 50px;
-        }
         .error {
             color: #c0392b;
+            text-align: center;
+            padding: 50px;
         }
     </style>
 </head>
@@ -71,13 +62,14 @@
     <div class="container">
         <a href="index.html" class="back-btn">← Back to Home</a>
         <div class="post-card" id="postContainer">
-            <div class="loading">Loading post...</div>
+            <div style="text-align:center; padding:50px;">Loading...</div>
         </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script>
+        // Firebase config
         const firebaseConfig = {
             apiKey: "AIzaSyAOKSPMSNaFP167R-uWtvwVegH3exOViRQ",
             authDomain: "the-farhan-world.firebaseapp.com",
@@ -90,6 +82,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+        // Get post ID from URL
         const urlParams = new URLSearchParams(window.location.search);
         const postId = urlParams.get('id');
 
@@ -97,47 +90,38 @@
             const container = document.getElementById('postContainer');
             
             if (!postId) {
-                container.innerHTML = '<div class="error">❌ No post ID provided</div>';
+                container.innerHTML = '<div class="error">No post ID found in URL</div>';
                 return;
             }
-            
-            console.log("Loading post ID:", postId);
-            
+
             try {
-                const docRef = db.collection('posts').doc(postId);
-                const docSnap = await docRef.get();
+                const doc = await db.collection('posts').doc(postId).get();
                 
-                if (docSnap.exists()) {
-                    const post = docSnap.data();
-                    console.log("Post found:", post);
-                    
-                    document.title = `${post.headline || 'Post'} - The Farhan World`;
-                    
+                if (doc.exists) {
+                    const post = doc.data();
                     container.innerHTML = `
                         <span class="category">${post.category || 'News'}</span>
                         <h1>${post.headline || 'No Title'}</h1>
                         <div class="meta">
-                            📅 ${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString() : 'Unknown date'} &nbsp;|&nbsp;
+                            📅 ${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString() : 'Unknown date'} | 
                             👁️ ${post.views || 0} views
                         </div>
                         ${post.image ? `<img src="${post.image}" alt="${post.headline}">` : ''}
-                        ${post.caption ? `<p style="text-align:center; color:#666; margin-top:-10px; font-size:14px;">${post.caption}</p>` : ''}
                         <div class="content">
-                            ${post.content ? post.content.replace(/\n/g, '<br>') : 'No content available'}
+                            <p>${post.content || 'No content available'}</p>
                         </div>
-                        ${post.tags && post.tags.length ? `<div style="margin-top:30px; padding-top:20px; border-top:1px solid #eee;"><strong>Tags:</strong> ${post.tags.map(t => `#${t}`).join(', ')}</div>` : ''}
                     `;
                     
-                    // Increase view count
-                    await docRef.update({
+                    // Update view count
+                    await db.collection('posts').doc(postId).update({
                         views: (post.views || 0) + 1
                     });
                 } else {
-                    container.innerHTML = `<div class="error">❌ Post not found! (ID: ${postId})</div>`;
+                    container.innerHTML = '<div class="error">Post not found!</div>';
                 }
             } catch (error) {
-                console.error("Error loading post:", error);
-                container.innerHTML = '<div class="error">❌ Error loading post. Please try again.</div>';
+                console.error("Error:", error);
+                container.innerHTML = '<div class="error">Error loading post: ' + error.message + '</div>';
             }
         }
 
