@@ -2,50 +2,158 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Edit Post - Admin Panel</title>
-    <link rel="stylesheet" href="admin-style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Post - The Farhan World</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #f4f6f9;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .form-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-card h1 {
+            margin-bottom: 20px;
+            color: #1a1a2e;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-primary {
+            background: #c0392b;
+            color: white;
+        }
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #c0392b;
+            text-decoration: none;
+        }
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-<body class="admin-dashboard-body">
-    <div class="admin-wrapper">
-        <aside class="admin-sidebar">
-            <div class="sidebar-header"><h3><i class="fas fa-globe-americas"></i> The Farhan World</h3><p>Admin Panel</p></div>
-            <nav class="admin-nav">
-                <ul>
-                    <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-                    <li><a href="create-post.html"><i class="fas fa-plus-circle"></i> Create Post</a></li>
-                    <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                </ul>
-            </nav>
-        </aside>
-        
-        <main class="admin-main">
-            <div class="admin-header"><h1>Edit Post</h1><div class="admin-user"><span><i class="fas fa-user-circle"></i> Admin</span></div></div>
-            
-            <form id="editPostForm" class="post-form">
-                <div class="form-group"><label>Headline *</label><input type="text" id="postHeadline" required></div>
-                <div class="form-group"><label>Title / Subtitle</label><input type="text" id="postTitle"></div>
-                <div class="form-row">
-                    <div class="form-group"><label>Category *</label><select id="postCategory" required><option value="">Select</option><option value="world">World</option><option value="politics">Politics</option><option value="business">Business</option><option value="technology">Technology</option><option value="sports">Sports</option><option value="entertainment">Entertainment</option></select></div>
-                    <div class="form-group"><label>Status</label><select id="postStatus"><option value="published">Published</option><option value="draft">Draft</option></select></div>
+<body>
+    <div class="container">
+        <a href="dashboard.html" class="back-link">← Back to Dashboard</a>
+        <div class="form-card">
+            <h1>✏️ Edit Post</h1>
+            <form id="editPostForm">
+                <div class="form-group">
+                    <label>Headline *</label>
+                    <input type="text" id="headline" required>
                 </div>
-                <div class="form-group"><label>Image URL *</label><input type="text" id="postImage" required></div>
-                <div class="form-group"><label>Image Caption</label><textarea id="postCaption" rows="2"></textarea></div>
-                <div class="form-group"><label>Short Description *</label><textarea id="postExcerpt" rows="3" required></textarea></div>
-                <div class="form-group"><label>Full Content *</label><textarea id="postContent" rows="10" required></textarea></div>
-                <div class="form-group"><label>Redirect Type</label><select id="redirectType"><option value="none">No redirect</option><option value="external">External URL</option></select></div>
-                <div class="form-group"><label>Redirect URL</label><input type="url" id="redirectUrl" placeholder="https://example.com"></div>
-                <div class="form-group"><label>Tags</label><input type="text" id="postTags" placeholder="news, world"></div>
-                <div class="form-actions"><button type="submit" class="btn-primary"><i class="fas fa-save"></i> Update Post</button></div>
+                <div class="form-group">
+                    <label>Title / Subtitle</label>
+                    <input type="text" id="title">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="category" required>
+                            <option value="">Select</option>
+                            <option value="world">World News</option>
+                            <option value="politics">Politics</option>
+                            <option value="business">Business</option>
+                            <option value="technology">Technology</option>
+                            <option value="sports">Sports</option>
+                            <option value="entertainment">Entertainment</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="status">
+                            <option value="published">Published</option>
+                            <option value="draft">Draft</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input type="text" id="image" placeholder="https://picsum.photos/800/500">
+                </div>
+                <div class="form-group">
+                    <label>Image Caption</label>
+                    <textarea id="caption" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Short Description *</label>
+                    <textarea id="excerpt" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Full Content *</label>
+                    <textarea id="content" rows="10" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Tags (comma separated)</label>
+                    <input type="text" id="tags" placeholder="news, world">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">💾 Update Post</button>
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='dashboard.html'">Cancel</button>
+                </div>
             </form>
-        </main>
+        </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-config.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="firebase-config.js"></script>
     <script>
-        if (!isAdminLoggedIn()) window.location.href = 'admin.html';
+        if (!isAdminLoggedIn()) {
+            window.location.href = 'admin.html';
+        }
         
         const urlParams = new URLSearchParams(window.location.search);
         const postId = urlParams.get('id');
@@ -53,17 +161,15 @@
         async function loadPost() {
             const post = await getPostById(postId);
             if (post) {
-                document.getElementById('postTitle').value = post.title || '';
-                document.getElementById('postHeadline').value = post.headline || '';
-                document.getElementById('postCategory').value = post.category;
-                document.getElementById('postImage').value = post.image;
-                document.getElementById('postCaption').value = post.caption || '';
-                document.getElementById('postExcerpt').value = post.excerpt || '';
-                document.getElementById('postContent').value = post.content;
-                document.getElementById('postTags').value = (post.tags || []).join(', ');
-                document.getElementById('postStatus').value = post.status;
-                document.getElementById('redirectType').value = post.redirect_type || 'none';
-                document.getElementById('redirectUrl').value = post.redirect_url || '';
+                document.getElementById('headline').value = post.headline || '';
+                document.getElementById('title').value = post.title || '';
+                document.getElementById('category').value = post.category || '';
+                document.getElementById('image').value = post.image || '';
+                document.getElementById('caption').value = post.caption || '';
+                document.getElementById('excerpt').value = post.excerpt || '';
+                document.getElementById('content').value = post.content || '';
+                document.getElementById('tags').value = (post.tags || []).join(', ');
+                document.getElementById('status').value = post.status || 'published';
             }
         }
         
@@ -71,29 +177,27 @@
             e.preventDefault();
             
             const updatedData = {
-                title: document.getElementById('postTitle').value,
-                headline: document.getElementById('postHeadline').value,
-                category: document.getElementById('postCategory').value,
-                image: document.getElementById('postImage').value,
-                caption: document.getElementById('postCaption').value,
-                excerpt: document.getElementById('postExcerpt').value,
-                content: document.getElementById('postContent').value,
-                tags: document.getElementById('postTags').value.split(',').map(t => t.trim()),
-                status: document.getElementById('postStatus').value,
-                redirect_type: document.getElementById('redirectType').value,
-                redirect_url: document.getElementById('redirectUrl').value
+                headline: document.getElementById('headline').value,
+                title: document.getElementById('title').value,
+                category: document.getElementById('category').value,
+                image: document.getElementById('image').value,
+                caption: document.getElementById('caption').value,
+                excerpt: document.getElementById('excerpt').value,
+                content: document.getElementById('content').value,
+                tags: document.getElementById('tags').value.split(',').map(t => t.trim()),
+                status: document.getElementById('status').value
             };
             
             const success = await updatePost(postId, updatedData);
+            
             if (success) {
                 alert('Post updated successfully!');
                 window.location.href = 'dashboard.html';
             } else {
-                alert('Error updating post.');
+                alert('Error updating post. Please try again.');
             }
         });
         
-        document.getElementById('logoutBtn').addEventListener('click', async () => { await adminLogout(); });
         loadPost();
     </script>
 </body>
