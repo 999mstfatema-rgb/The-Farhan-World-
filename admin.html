@@ -119,19 +119,19 @@
         </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="firebase-config.js"></script>
     <script>
+        if (isAdminLoggedIn()) {
+            window.location.href = 'dashboard.html';
+        }
+        
         const form = document.getElementById('loginForm');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
         const rememberCheck = document.getElementById('remember');
         const messageBox = document.getElementById('messageBox');
-        
-        const ADMIN_EMAIL = 'admin@thefarhanworld.com';
-        const ADMIN_PASSWORD = 'admin123';
-        
-        if (localStorage.getItem('admin_logged_in') === 'true') {
-            window.location.href = 'dashboard.html';
-        }
         
         function showMessage(text, type) {
             messageBox.textContent = text;
@@ -141,7 +141,7 @@
             }, 3000);
         }
         
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const email = emailInput.value.trim();
@@ -153,17 +153,21 @@
                 return;
             }
             
-            if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-                localStorage.setItem('admin_logged_in', 'true');
-                if (remember) {
-                    localStorage.setItem('admin_remembered', 'true');
-                }
+            const loginBtn = document.querySelector('.login-btn');
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Logging in...';
+            
+            const success = await adminLogin(email, password, remember);
+            
+            if (success) {
                 showMessage('Login successful! Redirecting...', 'success');
                 setTimeout(() => {
                     window.location.href = 'dashboard.html';
                 }, 1000);
             } else {
                 showMessage('Invalid email or password', 'error');
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Login';
             }
         });
     </script>
