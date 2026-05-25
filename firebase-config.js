@@ -13,23 +13,46 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// ========== NO AUTO AUTH CHECK ==========
-
 // ========== POST FUNCTIONS ==========
 async function getAllPosts() {
-    const snapshot = await db.collection('posts').orderBy('createdAt', 'desc').get();
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    try {
+        const snapshot = await db.collection('posts').orderBy('createdAt', 'desc').get();
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+        console.error("Error getting all posts:", error);
+        return [];
+    }
 }
 
 async function getPublishedPosts() {
-    const snapshot = await db.collection('posts').where('status', '==', 'published').orderBy('createdAt', 'desc').get();
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    try {
+        const snapshot = await db.collection('posts').where('status', '==', 'published').orderBy('createdAt', 'desc').get();
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+        console.error("Error getting published posts:", error);
+        return [];
+    }
+}
+
+async function getPostsByCategory(category) {
+    try {
+        const snapshot = await db.collection('posts').where('status', '==', 'published').where('category', '==', category).orderBy('createdAt', 'desc').get();
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+        console.error("Error getting posts by category:", error);
+        return [];
+    }
 }
 
 async function getPostById(id) {
-    const doc = await db.collection('posts').doc(id).get();
-    if (!doc.exists) return null;
-    return { id: doc.id, ...doc.data() };
+    try {
+        const doc = await db.collection('posts').doc(id).get();
+        if (!doc.exists) return null;
+        return { id: doc.id, ...doc.data() };
+    } catch (error) {
+        console.error("Error getting post by id:", error);
+        return null;
+    }
 }
 
 async function createPost(postData) {
@@ -41,7 +64,7 @@ async function createPost(postData) {
         });
         return true;
     } catch (error) {
-        console.error('Error:', error);
+        console.error("Error creating post:", error);
         return false;
     }
 }
@@ -51,7 +74,7 @@ async function updatePost(id, updatedData) {
         await db.collection('posts').doc(id).update(updatedData);
         return true;
     } catch (error) {
-        console.error('Error:', error);
+        console.error("Error updating post:", error);
         return false;
     }
 }
@@ -61,8 +84,21 @@ async function deletePost(id) {
         await db.collection('posts').doc(id).delete();
         return true;
     } catch (error) {
-        console.error('Error:', error);
+        console.error("Error deleting post:", error);
         return false;
+    }
+}
+
+async function incrementViews(id) {
+    try {
+        const post = await getPostById(id);
+        if (post) {
+            await db.collection('posts').doc(id).update({
+                views: (post.views || 0) + 1
+            });
+        }
+    } catch (error) {
+        console.error("Error incrementing views:", error);
     }
 }
 
@@ -78,6 +114,14 @@ async function getCategoryCounts() {
 async function getTrendingPosts(limit = 5) {
     const posts = await getPublishedPosts();
     return posts.sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, limit);
+}
+
+async function searchPosts(query) {
+    const posts = await getPublishedPosts();
+    return posts.filter(post => 
+        post.headline.toLowerCase().includes(query.toLowerCase()) ||
+        post.content.toLowerCase().includes(query.toLowerCase())
+    );
 }
 
 // ========== SOCIAL LINKS ==========
@@ -96,3 +140,28 @@ function saveSocialLinks(links) {
         localStorage.setItem(`social_${key}`, links[key]);
     });
 }
+
+// ========== AUTH FUNCTIONS (for admin) ==========
+function isAdminLoggedIn() {
+    return localStorage.getItem('admin_logged_in') === 'true';
+}
+
+function adminLogout() {
+    localStorage.removeItem('admin_logged_in');
+    window.location.href = 'admin.html';
+}
+
+// Test function to check Firebase connection
+async function testFirebaseConnection() {
+    try {
+        const test = await db.collection('posts').limit(1).get();
+        console.log("Firebase connected successfully!");
+        return true;
+    } catch (error) {
+        console.error("Firebase connection error:", error);
+        return false;
+    }
+}
+
+// Run test on load
+testFirebaseConnection();
