@@ -7,6 +7,17 @@
     <link rel="stylesheet" href="admin-style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .error-message {
+            background: #ffebee;
+            color: #c0392b;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body class="admin-login-body">
     <div class="login-container">
@@ -16,6 +27,7 @@
                 <h2>The Farhan World</h2>
                 <p>Admin Panel</p>
             </div>
+            <div id="errorMsg" class="error-message"></div>
             <form id="loginForm">
                 <div class="input-group">
                     <i class="fas fa-envelope"></i>
@@ -41,20 +53,61 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <script>
-        localStorage.removeItem('admin_logged_in');
-        localStorage.removeItem('session');
+        // Clear old session
+        localStorage.clear();
         
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            
             const email = document.getElementById('adminEmail').value;
             const password = document.getElementById('adminPassword').value;
             const rememberMe = document.getElementById('rememberMe').checked;
+            const errorDiv = document.getElementById('errorMsg');
             
-            const success = await adminLogin(email, password, rememberMe);
-            if (success) {
-                window.location.href = 'dashboard.html';
-            } else {
-                alert('Invalid credentials! Please contact administrator.');
+            errorDiv.style.display = 'none';
+            
+            if (!email || !password) {
+                errorDiv.textContent = 'Please enter email and password';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            const loginBtn = document.querySelector('.login-btn');
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+            
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) {
+                    errorDiv.textContent = 'Login failed: ' + error.message;
+                    errorDiv.style.display = 'block';
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                    return;
+                }
+                
+                if (data.session) {
+                    localStorage.setItem('admin_logged_in', 'true');
+                    localStorage.setItem('session', JSON.stringify(data.session));
+                    if (rememberMe) {
+                        localStorage.setItem('admin_remembered', 'true');
+                    }
+                    window.location.href = 'dashboard.html';
+                } else {
+                    errorDiv.textContent = 'Login failed. Please try again.';
+                    errorDiv.style.display = 'block';
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                }
+            } catch (err) {
+                errorDiv.textContent = 'Error: ' + err.message;
+                errorDiv.style.display = 'block';
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
             }
         });
     </script>
