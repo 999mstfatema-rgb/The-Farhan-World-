@@ -239,16 +239,13 @@
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="firebase-config.js"></script>
     <script>
-        // ========== NO onAuthStateChanged ==========
-        // Only check localStorage once
+        // Check if logged in - ONE TIME CHECK
         if (localStorage.getItem('admin_logged_in') !== 'true') {
             window.location.href = 'admin.html';
         }
         
-        // ========== LOAD POSTS ==========
         async function loadPosts() {
             try {
                 const posts = await getAllPosts();
@@ -304,7 +301,6 @@
             }
         }
         
-        // ========== SOCIAL LINKS ==========
         function loadSocialLinks() {
             const links = getSocialLinks();
             
@@ -353,13 +349,11 @@
             alert('Social links saved successfully!');
         });
         
-        // ========== LOGOUT ==========
         function logout() {
             localStorage.removeItem('admin_logged_in');
             window.location.href = 'admin.html';
         }
         
-        // ========== INITIAL LOAD ==========
         loadSocialLinks();
         loadPosts();
     </script>
