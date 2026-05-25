@@ -169,7 +169,6 @@
         }
         .edit-social-form h4 {
             margin-bottom: 15px;
-            color: #1a1a2e;
         }
         .edit-social-form input {
             width: 100%;
@@ -181,9 +180,8 @@
         .edit-social-form .form-buttons {
             display: flex;
             gap: 10px;
-            margin-top: 10px;
         }
-        .edit-social-form .save-btn {
+        .save-btn {
             background: #27ae60;
             color: white;
             border: none;
@@ -191,7 +189,7 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        .edit-social-form .cancel-btn {
+        .cancel-btn {
             background: #95a5a6;
             color: white;
             border: none;
@@ -258,10 +256,10 @@
             <div id="socialList"></div>
             <div id="editSocialForm" class="edit-social-form">
                 <h4>✏️ Edit Social Media Link</h4>
-                <input type="text" id="editPlatform" readonly style="background:#f0f0f0; font-weight:500;">
-                <input type="url" id="editUrl" placeholder="Enter URL (example: https://facebook.com/yourpage)">
+                <input type="text" id="editPlatform" readonly style="background:#f0f0f0;">
+                <input type="url" id="editUrl" placeholder="Enter URL (https://...)">
                 <div class="form-buttons">
-                    <button class="save-btn" onclick="saveSocialEdit()">💾 Save Changes</button>
+                    <button class="save-btn" onclick="saveSocialEdit()">💾 Save</button>
                     <button class="cancel-btn" onclick="cancelEdit()">Cancel</button>
                 </div>
             </div>
@@ -275,50 +273,63 @@
     <script>
         let currentEditPlatform = null;
         let currentEditPlatformName = null;
+        let authChecked = false;
         
-        // Check if user is logged in
+        // Check if user is logged in - ONE TIME ONLY
         firebase.auth().onAuthStateChanged((user) => {
+            if (authChecked) return;
+            authChecked = true;
+            
             if (!user) {
                 window.location.href = 'admin.html';
+            } else {
+                // User is logged in, load the page
+                loadSocialLinks();
+                loadPosts();
             }
         });
         
         async function loadPosts() {
-            const posts = await getAllPosts();
-            
-            document.getElementById('totalPosts').textContent = posts.length;
-            const totalViews = posts.reduce((sum, p) => sum + (p.views || 0), 0);
-            document.getElementById('totalViews').textContent = totalViews;
-            
-            const container = document.getElementById('postsList');
-            
-            if (posts.length === 0) {
-                container.innerHTML = '<p>No posts yet. <a href="create-post.html">Create your first post</a></p>';
-                return;
+            try {
+                const posts = await getAllPosts();
+                
+                document.getElementById('totalPosts').textContent = posts.length;
+                const totalViews = posts.reduce((sum, p) => sum + (p.views || 0), 0);
+                document.getElementById('totalViews').textContent = totalViews;
+                
+                const container = document.getElementById('postsList');
+                
+                if (posts.length === 0) {
+                    container.innerHTML = '<p>No posts yet. <a href="create-post.html">Create your first post</a></p>';
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <table>
+                        <thead>
+                            <tr><th>ID</th><th>Headline</th><th>Category</th><th>Date</th><th>Views</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody>
+                            ${posts.map(post => `
+                                <tr>
+                                    <td>${post.id.slice(0, 8)}...</td>
+                                    <td><strong>${post.headline}</strong></td>
+                                    <td>${post.category}</td>
+                                    <td>${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString() : 'New'}</td>
+                                    <td>${post.views || 0}</td>
+                                    <td>
+                                        <button class="edit-btn" onclick="editPost('${post.id}')">Edit</button>
+                                        <button class="delete-btn" onclick="deletePostConfirm('${post.id}')">Delete</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Error loading posts:', error);
+                document.getElementById('postsList').innerHTML = '<p>Error loading posts. Please refresh.</p>';
             }
-            
-            container.innerHTML = `
-                </table>
-                    <thead>
-                        <tr><th>ID</th><th>Headline</th><th>Category</th><th>Date</th><th>Views</th><th>Actions</th></tr>
-                    </thead>
-                    <tbody>
-                        ${posts.map(post => `
-                            <tr>
-                                <td>${post.id.slice(0, 8)}...</td>
-                                <td><strong>${post.headline}</strong></td>
-                                <td>${post.category}</td>
-                                <td>${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString() : 'New'}</td>
-                                <td>${post.views || 0}</td>
-                                <td>
-                                    <button class="edit-btn" onclick="editPost('${post.id}')">Edit</button>
-                                    <button class="delete-btn" onclick="deletePostConfirm('${post.id}')">Delete</button>
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
         }
         
         function editPost(id) {
@@ -328,56 +339,57 @@
         async function deletePostConfirm(id) {
             if (confirm('Delete this post?')) {
                 await deletePost(id);
-                loadPosts();
+                await loadPosts();
                 alert('Post deleted!');
             }
         }
         
         function loadSocialLinks() {
-            const links = getSocialLinks();
-            const socialContainer = document.getElementById('socialList');
-            
-            const socialPlatforms = [
-                { key: 'facebook', name: 'Facebook', icon: 'fab fa-facebook-f', color: '#1877f2', placeholder: 'https://facebook.com/yourpage' },
-                { key: 'instagram', name: 'Instagram', icon: 'fab fa-instagram', color: '#e4405f', placeholder: 'https://instagram.com/yourusername' },
-                { key: 'twitter', name: 'Twitter', icon: 'fab fa-twitter', color: '#1da1f2', placeholder: 'https://twitter.com/yourusername' },
-                { key: 'whatsapp', name: 'WhatsApp', icon: 'fab fa-whatsapp', color: '#25d366', placeholder: 'https://wa.me/yourphonenumber' },
-                { key: 'youtube', name: 'YouTube', icon: 'fab fa-youtube', color: '#ff0000', placeholder: 'https://youtube.com/@yourchannel' }
-            ];
-            
-            let html = '<div class="social-list">';
-            socialPlatforms.forEach(platform => {
-                const url = links[platform.key];
-                html += `
-                    <div class="social-item">
-                        <div class="platform">
-                            <i class="${platform.icon}" style="color:${platform.color}; width:25px;"></i> ${platform.name}:
+            try {
+                const links = getSocialLinks();
+                const socialContainer = document.getElementById('socialList');
+                
+                const socialPlatforms = [
+                    { key: 'facebook', name: 'Facebook', icon: 'fab fa-facebook-f', color: '#1877f2' },
+                    { key: 'instagram', name: 'Instagram', icon: 'fab fa-instagram', color: '#e4405f' },
+                    { key: 'twitter', name: 'Twitter', icon: 'fab fa-twitter', color: '#1da1f2' },
+                    { key: 'whatsapp', name: 'WhatsApp', icon: 'fab fa-whatsapp', color: '#25d366' },
+                    { key: 'youtube', name: 'YouTube', icon: 'fab fa-youtube', color: '#ff0000' }
+                ];
+                
+                let html = '<div class="social-list">';
+                socialPlatforms.forEach(platform => {
+                    const url = links[platform.key];
+                    html += `
+                        <div class="social-item">
+                            <div class="platform">
+                                <i class="${platform.icon}" style="color:${platform.color}; width:25px;"></i> ${platform.name}:
+                            </div>
+                            <div class="link">
+                                ${url ? `<a href="${url}" target="_blank">${url}</a>` : '<span style="color:#999;">Not configured</span>'}
+                            </div>
+                            <button class="edit-social-btn" onclick="openEditForm('${platform.key}', '${platform.name}', '${url || ''}')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
                         </div>
-                        <div class="link">
-                            ${url ? `<a href="${url}" target="_blank">${url}</a>` : '<span style="color:#999;">Not configured</span>'}
-                        </div>
-                        <button class="edit-social-btn" onclick="openEditForm('${platform.key}', '${platform.name}', '${url || ''}', '${platform.placeholder}')">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                    </div>
-                `;
-            });
-            html += '</div>';
-            
-            socialContainer.innerHTML = html;
+                    `;
+                });
+                html += '</div>';
+                
+                socialContainer.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading social links:', error);
+                document.getElementById('socialList').innerHTML = '<p>Error loading social links.</p>';
+            }
         }
         
-        function openEditForm(key, name, currentUrl, placeholder) {
+        function openEditForm(key, name, currentUrl) {
             currentEditPlatform = key;
             currentEditPlatformName = name;
             const form = document.getElementById('editSocialForm');
             document.getElementById('editPlatform').value = name;
-            const urlInput = document.getElementById('editUrl');
-            urlInput.value = currentUrl;
-            urlInput.placeholder = placeholder;
+            document.getElementById('editUrl').value = currentUrl;
             form.classList.add('active');
-            
-            // Scroll to form
             form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         
@@ -404,14 +416,12 @@
         
         function logout() {
             firebase.auth().signOut().then(() => {
-                localStorage.removeItem('admin_logged_in');
+                window.location.href = 'admin.html';
+            }).catch((error) => {
+                console.error('Logout error:', error);
                 window.location.href = 'admin.html';
             });
         }
-        
-        // Initial load
-        loadSocialLinks();
-        loadPosts();
     </script>
 </body>
 </html>
