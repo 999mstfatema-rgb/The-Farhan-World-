@@ -119,7 +119,7 @@
             }
             
             try {
-                const docRef = db.collection('posts').doc(postId);
+                const docRef = db.collection('/posts/8Pphf9CTm92jRDOQ0GMr').doc(postId);
                 const docSnap = await docRef.get();
                 
                 if (docSnap.exists()) {
