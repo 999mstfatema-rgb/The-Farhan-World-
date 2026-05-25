@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>About Us - The Farhan World</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<div class="live-tv-bar">
+    <div class="container">
+        <div class="live-indicator"><span class="live-dot"></span><span class="live-text">LIVE</span></div>
+        <div class="live-ticker"><span class="ticker-label">BREAKING:</span><div class="ticker-scroll" id="liveTicker"></div></div>
+        <div class="datetime-show" id="currentDateTime"></div>
+    </div>
+</div>
+
+<nav class="navbar">
+    <div class="container">
+        <div class="nav-brand"><a href="index.html"><span class="brand-icon"><i class="fas fa-tv"></i></span><span class="brand-text">THE FARHAN WORLD</span></a></div>
+        <div class="nav-menu">
+            <ul>
+                <li><a href="index.html">HOME</a></li>
+                <li><a href="category.html?cat=world">WORLD</a></li>
+                <li><a href="category.html?cat=politics">POLITICS</a></li>
+                <li><a href="category.html?cat=business">BUSINESS</a></li>
+                <li><a href="category.html?cat=technology">TECH</a></li>
+                <li><a href="category.html?cat=sports">SPORTS</a></li>
+                <li><a href="about.html" class="active">ABOUT</a></li>
+                <li><a href="contact.html">CONTACT</a></li>
+            </ul>
+        </div>
+        <div class="nav-actions">
+            <a href="admin.html" class="admin-btn"><i class="fas fa-user-shield"></i> ADMIN</a>
+        </div>
+    </div>
+</nav>
+
+<main class="main-content" style="padding: 50px 0;">
+    <div class="container">
+        <div class="about-page">
+            <h1>About The Farhan World</h1>
+            <div class="about-content" id="aboutContent"></div>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-bottom"><p>&copy; 2026 THE FARHAN WORLD. All Rights Reserved.</p></div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script>
+    function loadAboutContent() {
+        const aboutContent = document.getElementById('aboutContent');
+        const savedAbout = localStorage.getItem('farhan_about_content');
+        if (savedAbout) {
+            aboutContent.innerHTML = savedAbout;
+        } else {
+            aboutContent.innerHTML = `
+                <h2>Welcome to The Farhan World</h2>
+                <p>The Farhan World is a premier news organization dedicated to delivering accurate, fast, and comprehensive news coverage from around the globe. Founded in 2024, we have quickly become one of the most trusted sources for breaking news, in-depth analysis, and exclusive stories.</p>
+                <h3>Our Mission</h3>
+                <p>To inform, inspire, and empower our audience with truth and integrity. We believe in journalism that matters.</p>
+                <h3>Our Team</h3>
+                <p>We are a diverse team of experienced journalists, editors, and media professionals committed to excellence in reporting.</p>
+                <h3>Contact Us</h3>
+                <p>Email: info@thefarhanworld.com<br>Phone: +880 1234 567890</p>
+            `;
+        }
+    }
+    loadAboutContent();
+</script>
+</body>
+</html>
