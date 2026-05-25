@@ -52,6 +52,7 @@
             padding: 25px;
             border-radius: 10px;
             text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
         .stat-card h3 {
             font-size: 28px;
@@ -76,10 +77,6 @@
             background: #c0392b;
             color: white;
         }
-        .btn-secondary {
-            background: #27ae60;
-            color: white;
-        }
         .btn-info {
             background: #3498db;
             color: white;
@@ -89,6 +86,7 @@
             padding: 20px;
             border-radius: 10px;
             margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
         .posts-section h2, .social-section h2 {
             margin-bottom: 20px;
@@ -96,6 +94,8 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            overflow-x: auto;
+            display: block;
         }
         th, td {
             padding: 12px;
@@ -140,6 +140,12 @@
             .social-form button {
                 grid-column: span 1;
             }
+            table {
+                font-size: 12px;
+            }
+            th, td {
+                padding: 8px;
+            }
         }
     </style>
 </head>
@@ -147,7 +153,7 @@
     <div class="container">
         <div class="header">
             <h1>📊 Admin Dashboard</h1>
-            <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+            <button class="logout-btn" onclick="adminLogout()">🚪 Logout</button>
         </div>
         
         <div class="stats">
@@ -180,7 +186,7 @@
         
         <div class="posts-section">
             <h2>📝 Manage Posts</h2>
-            <div id="postsList"></div>
+            <div id="postsList">Loading...</div>
         </div>
 
         <div class="social-section">
@@ -196,33 +202,17 @@
         </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="firebase-config.js"></script>
     <script>
-        if (localStorage.getItem('admin_logged_in') !== 'true') {
+        if (!isAdminLoggedIn()) {
             window.location.href = 'admin.html';
         }
         
-        // Load Social Links
-        function loadSocialLinks() {
-            document.getElementById('facebook').value = localStorage.getItem('social_facebook') || '';
-            document.getElementById('instagram').value = localStorage.getItem('social_instagram') || '';
-            document.getElementById('twitter').value = localStorage.getItem('social_twitter') || '';
-            document.getElementById('whatsapp').value = localStorage.getItem('social_whatsapp') || '';
-            document.getElementById('youtube').value = localStorage.getItem('social_youtube') || '';
-        }
-        
-        // Save Social Links
-        document.getElementById('socialForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            localStorage.setItem('social_facebook', document.getElementById('facebook').value);
-            localStorage.setItem('social_instagram', document.getElementById('instagram').value);
-            localStorage.setItem('social_twitter', document.getElementById('twitter').value);
-            localStorage.setItem('social_whatsapp', document.getElementById('whatsapp').value);
-            localStorage.setItem('social_youtube', document.getElementById('youtube').value);
-            alert('Social links saved successfully!');
-        });
-        
-        function loadPosts() {
-            const posts = JSON.parse(localStorage.getItem('farhan_posts') || '[]');
+        async function loadPosts() {
+            const posts = await getAllPosts();
             
             document.getElementById('totalPosts').textContent = posts.length;
             const totalViews = posts.reduce((sum, p) => sum + (p.views || 0), 0);
@@ -243,14 +233,14 @@
                     <tbody>
                         ${posts.map(post => `
                             <tr>
-                                <td>${post.id}</td>
+                                <td>${post.id.slice(0, 8)}...</td>
                                 <td><strong>${post.headline}</strong></td>
                                 <td>${post.category}</td>
-                                <td>${new Date(post.date).toLocaleDateString()}</td>
+                                <td>${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString() : 'New'}</td>
                                 <td>${post.views || 0}</td>
                                 <td>
-                                    <button class="edit-btn" onclick="editPost(${post.id})">Edit</button>
-                                    <button class="delete-btn" onclick="deletePost(${post.id})">Delete</button>
+                                    <button class="edit-btn" onclick="editPost('${post.id}')">Edit</button>
+                                    <button class="delete-btn" onclick="deletePostConfirm('${post.id}')">Delete</button>
                                 </td>
                             </tr>
                         `).join('')}
@@ -263,20 +253,34 @@
             window.location.href = `edit-post.html?id=${id}`;
         }
         
-        function deletePost(id) {
+        async function deletePostConfirm(id) {
             if (confirm('Delete this post?')) {
-                let posts = JSON.parse(localStorage.getItem('farhan_posts') || '[]');
-                posts = posts.filter(p => p.id !== id);
-                localStorage.setItem('farhan_posts', JSON.stringify(posts));
+                await deletePost(id);
                 loadPosts();
                 alert('Post deleted!');
             }
         }
         
-        function logout() {
-            localStorage.removeItem('admin_logged_in');
-            window.location.href = 'admin.html';
+        function loadSocialLinks() {
+            const links = getSocialLinks();
+            document.getElementById('facebook').value = links.facebook || '';
+            document.getElementById('instagram').value = links.instagram || '';
+            document.getElementById('twitter').value = links.twitter || '';
+            document.getElementById('whatsapp').value = links.whatsapp || '';
+            document.getElementById('youtube').value = links.youtube || '';
         }
+        
+        document.getElementById('socialForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            saveSocialLinks({
+                facebook: document.getElementById('facebook').value,
+                instagram: document.getElementById('instagram').value,
+                twitter: document.getElementById('twitter').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                youtube: document.getElementById('youtube').value
+            });
+            alert('Social links saved!');
+        });
         
         loadSocialLinks();
         loadPosts();
