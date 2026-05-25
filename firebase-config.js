@@ -17,7 +17,7 @@ const db = firebase.firestore();
 // Get all published posts
 async function getPosts() {
     try {
-        const snapshot = await db.collection('posts').where('status', '==', 'published').orderBy('createdAt', 'desc').get();
+        const snapshot = await db.collection('/posts/8Pphf9CTm92jRDOQ0GMr').where('status', '==', 'published').orderBy('createdAt', 'desc').get();
         return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     } catch (error) {
         console.error("Error getting posts:", error);
@@ -28,7 +28,7 @@ async function getPosts() {
 // Get single post by ID
 async function getPostById(id) {
     try {
-        const doc = await db.collection('posts').doc(id).get();
+        const doc = await db.collection('/posts/8Pphf9CTm92jRDOQ0GMr').doc(id).get();
         if (!doc.exists) return null;
         return { id: doc.id, ...doc.data() };
     } catch (error) {
@@ -40,7 +40,7 @@ async function getPostById(id) {
 // Create new post
 async function createPost(postData) {
     try {
-        await db.collection('posts').add({
+        await db.collection('/posts/8Pphf9CTm92jRDOQ0GMr').add({
             ...postData,
             createdAt: new Date(),
             status: 'published',
@@ -56,7 +56,7 @@ async function createPost(postData) {
 // Update post
 async function updatePost(id, updatedData) {
     try {
-        await db.collection('posts').doc(id).update(updatedData);
+        await db.collection('/posts/8Pphf9CTm92jRDOQ0GMr').doc(id).update(updatedData);
         return true;
     } catch (error) {
         console.error("Error updating post:", error);
@@ -67,7 +67,7 @@ async function updatePost(id, updatedData) {
 // Delete post
 async function deletePost(id) {
     try {
-        await db.collection('posts').doc(id).delete();
+        await db.collection('/posts/8Pphf9CTm92jRDOQ0GMr').doc(id).delete();
         return true;
     } catch (error) {
         console.error("Error deleting post:", error);
@@ -80,7 +80,7 @@ async function incrementViews(id) {
     try {
         const post = await getPostById(id);
         if (post) {
-            await db.collection('posts').doc(id).update({
+            await db.collection('/posts/8Pphf9CTm92jRDOQ0GMr').doc(id).update({
                 views: (post.views || 0) + 1
             });
         }
