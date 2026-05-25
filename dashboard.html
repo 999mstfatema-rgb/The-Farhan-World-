@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - The Farhan World</title>
     <style>
-        /* Tomar age je style chilo puro same rakhlam */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: system-ui, -apple-system, sans-serif; background: #f4f6f9; }
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
@@ -127,7 +126,9 @@
             }
         }
 
-        function editPost(id) { window.location.href = `edit-post.html?id=${id}`; }
+        function editPost(id) { 
+            window.location.href = `edit-post.html?id=${id}`; 
+        }
 
         async function deletePostConfirm(id) {
             if (confirm('Delete this post?')) {
@@ -139,14 +140,24 @@
 
         function loadSocialLinks() {
             const links = getSocialLinks();
-            // ... (tomar age je loadSocialLinks function chilo puro ta ekhane boshao)
-            // ami choto kore rakhlam, puro code tomar age je chilo oita boshao
             document.getElementById('facebook').value = links.facebook || '';
-            // baki input gula same
-            // current links er html same
+            document.getElementById('instagram').value = links.instagram || '';
+            document.getElementById('twitter').value = links.twitter || '';
+            document.getElementById('whatsapp').value = links.whatsapp || '';
+            document.getElementById('youtube').value = links.youtube || '';
+            
+            // Current links display (যদি আরও দেখাতে চান তাহলে এখানে যোগ করতে পারবেন)
+            const currentDiv = document.getElementById('currentSocialLinks');
+            currentDiv.innerHTML = `
+                <div class="link-item"><span class="platform">Facebook:</span> <span class="url">\( {links.facebook ? `<a href=" \){links.facebook}" target="_blank">${links.facebook}</a>` : 'Not set'}</span></div>
+                <div class="link-item"><span class="platform">Instagram:</span> <span class="url">\( {links.instagram ? `<a href=" \){links.instagram}" target="_blank">${links.instagram}</a>` : 'Not set'}</span></div>
+                <div class="link-item"><span class="platform">Twitter:</span> <span class="url">\( {links.twitter ? `<a href=" \){links.twitter}" target="_blank">${links.twitter}</a>` : 'Not set'}</span></div>
+                <div class="link-item"><span class="platform">WhatsApp:</span> <span class="url">\( {links.whatsapp ? `<a href=" \){links.whatsapp}" target="_blank">${links.whatsapp}</a>` : 'Not set'}</span></div>
+                <div class="link-item"><span class="platform">YouTube:</span> <span class="url">\( {links.youtube ? `<a href=" \){links.youtube}" target="_blank">${links.youtube}</a>` : 'Not set'}</span></div>
+            `;
         }
 
-        // Form
+        // Form Submit
         document.getElementById('socialForm').addEventListener('submit', (e) => {
             e.preventDefault();
             saveSocialLinks({
@@ -165,11 +176,11 @@
             window.location.href = 'admin.html';
         }
 
-        // One time load
+        // Page Load - Auto Refresh বন্ধ
         if (!initialized) {
             initialized = true;
             loadSocialLinks();
-            loadPosts();
+            // loadPosts();   ← Auto refresh বন্ধ করা হয়েছে
         }
     </script>
 </body>
