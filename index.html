@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Farhan World | Global News Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<!-- Live TV Bar -->
+<div class="live-tv-bar">
+    <div class="container">
+        <div class="live-indicator"><span class="live-dot"></span><span class="live-text">LIVE</span></div>
+        <div class="live-ticker"><span class="ticker-label">BREAKING:</span><div class="ticker-scroll" id="liveTicker"></div></div>
+        <div class="datetime-show" id="currentDateTime"></div>
+    </div>
+</div>
+
+<!-- Navigation -->
+<nav class="navbar">
+    <div class="container">
+        <div class="nav-brand"><a href="index.html"><span class="brand-icon"><i class="fas fa-tv"></i></span><span class="brand-text">THE FARHAN WORLD</span></a></div>
+        <div class="nav-menu">
+            <ul>
+                <li><a href="index.html" class="active">HOME</a></li>
+                <li><a href="category.html?cat=world">WORLD</a></li>
+                <li><a href="category.html?cat=politics">POLITICS</a></li>
+                <li><a href="category.html?cat=business">BUSINESS</a></li>
+                <li><a href="category.html?cat=technology">TECH</a></li>
+                <li><a href="category.html?cat=sports">SPORTS</a></li>
+                <li><a href="about.html">ABOUT</a></li>
+                <li><a href="contact.html">CONTACT</a></li>
+            </ul>
+        </div>
+        <div class="nav-actions">
+            <button class="search-toggle" id="searchToggle"><i class="fas fa-search"></i></button>
+            <a href="admin.html" class="admin-btn"><i class="fas fa-user-shield"></i> ADMIN</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Search Bar -->
+<div class="search-bar" id="searchBar">
+    <div class="container">
+        <input type="text" id="searchInput" placeholder="Search news, topics, or categories...">
+        <button id="searchBtn"><i class="fas fa-search"></i> SEARCH</button>
+    </div>
+</div>
+
+<!-- Headline Strip -->
+<div class="headline-strip">
+    <div class="container">
+        <div class="strip-label">TOP STORIES</div>
+        <div class="strip-content" id="topStoriesStrip"></div>
+    </div>
+</div>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-grid" id="heroGrid"></div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<main class="main-content">
+    <div class="container">
+        <div class="content-grid">
+            <div class="latest-news">
+                <div class="section-header">
+                    <h2><i class="fas fa-clock"></i> LATEST NEWS</h2>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">ALL</button>
+                        <button class="filter-btn" data-filter="world">WORLD</button>
+                        <button class="filter-btn" data-filter="politics">POLITICS</button>
+                        <button class="filter-btn" data-filter="business">BUSINESS</button>
+                        <button class="filter-btn" data-filter="technology">TECH</button>
+                    </div>
+                </div>
+                <div class="news-grid" id="newsGrid"></div>
+                <div class="load-more"><button id="loadMoreBtn">LOAD MORE <i class="fas fa-arrow-down"></i></button></div>
+            </div>
+            
+            <aside class="sidebar">
+                <div class="widget trending-widget">
+                    <h3><i class="fas fa-fire"></i> TRENDING NOW</h3>
+                    <ul id="trendingList"></ul>
+                </div>
+                <div class="widget categories-widget">
+                    <h3><i class="fas fa-folder"></i> CATEGORIES</h3>
+                    <ul>
+                        <li><a href="category.html?cat=world">World News <span id="worldCount">0</span></a></li>
+                        <li><a href="category.html?cat=politics">Politics <span id="politicsCount">0</span></a></li>
+                        <li><a href="category.html?cat=business">Business <span id="businessCount">0</span></a></li>
+                        <li><a href="category.html?cat=technology">Technology <span id="techCount">0</span></a></li>
+                        <li><a href="category.html?cat=sports">Sports <span id="sportsCount">0</span></a></li>
+                        <li><a href="category.html?cat=entertainment">Entertainment <span id="entertainmentCount">0</span></a></li>
+                    </ul>
+                </div>
+                <div class="widget newsletter-widget">
+                    <h3><i class="fas fa-envelope"></i> NEWSLETTER</h3>
+                    <p>Get the latest updates straight to your inbox</p>
+                    <form id="newsletterForm">
+                        <input type="email" placeholder="Your email address" required>
+                        <button type="submit">SUBSCRIBE <i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+                <div class="widget social-widget">
+                    <h3><i class="fas fa-share-alt"></i> FOLLOW US</h3>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-about">
+                <h3>THE FARHAN WORLD</h3>
+                <p>Your trusted source for accurate, fast, and comprehensive news coverage from around the globe.</p>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4>QUICK LINKS</h4>
+                <ul>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h4>CONTACT INFO</h4>
+                <p id="footerEmail"><i class="fas fa-envelope"></i> info@thefarhanworld.com</p>
+                <p id="footerPhone"><i class="fas fa-phone"></i> +880 1234 567890</p>
+                <p id="footerAddress"><i class="fas fa-map-marker-alt"></i> Dhaka, Bangladesh</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 THE FARHAN WORLD. All Rights Reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
