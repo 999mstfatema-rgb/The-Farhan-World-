@@ -222,11 +222,11 @@
         <div class="social-section">
             <h2>🔗 Social Media Links</h2>
             <form id="socialForm" class="social-form">
-                <input type="url" id="facebook" placeholder="Facebook URL (https://facebook.com/yourpage)">
-                <input type="url" id="instagram" placeholder="Instagram URL (https://instagram.com/username)">
-                <input type="url" id="twitter" placeholder="Twitter URL (https://twitter.com/username)">
-                <input type="url" id="whatsapp" placeholder="WhatsApp URL (https://wa.me/phone)">
-                <input type="url" id="youtube" placeholder="YouTube URL (https://youtube.com/@channel)">
+                <input type="url" id="facebook" placeholder="Facebook URL">
+                <input type="url" id="instagram" placeholder="Instagram URL">
+                <input type="url" id="twitter" placeholder="Twitter URL">
+                <input type="url" id="whatsapp" placeholder="WhatsApp URL">
+                <input type="url" id="youtube" placeholder="YouTube URL">
                 <button type="submit">💾 Save All Social Links</button>
             </form>
             
@@ -242,14 +242,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="firebase-config.js"></script>
     <script>
-        // Check if user is logged in - ONE TIME CHECK
-        firebase.auth().onAuthStateChanged((user) => {
-            if (!user) {
-                window.location.href = 'admin.html';
-            }
-        });
-        
-        // Also check localStorage
+        // ONLY localStorage check - NO onAuthStateChanged
         if (localStorage.getItem('admin_logged_in') !== 'true') {
             window.location.href = 'admin.html';
         }
@@ -313,7 +306,6 @@
             document.getElementById('whatsapp').value = links.whatsapp || '';
             document.getElementById('youtube').value = links.youtube || '';
             
-            // Display current links
             const socialPlatforms = [
                 { key: 'facebook', name: 'Facebook', icon: 'fab fa-facebook-f', color: '#1877f2' },
                 { key: 'instagram', name: 'Instagram', icon: 'fab fa-instagram', color: '#e4405f' },
@@ -355,9 +347,7 @@
         
         function logout() {
             localStorage.removeItem('admin_logged_in');
-            firebase.auth().signOut().then(() => {
-                window.location.href = 'admin.html';
-            });
+            window.location.href = 'admin.html';
         }
         
         loadSocialLinks();
