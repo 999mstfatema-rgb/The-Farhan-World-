@@ -17,6 +17,15 @@
             display: none;
             font-size: 14px;
         }
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body class="admin-login-body">
@@ -28,6 +37,7 @@
                 <p>Admin Panel</p>
             </div>
             <div id="errorMsg" class="error-message"></div>
+            <div id="successMsg" class="success-message"></div>
             <form id="loginForm">
                 <div class="input-group">
                     <i class="fas fa-envelope"></i>
@@ -50,15 +60,47 @@
             </div>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-config.js"></script>
     <script>
-        // Check if supabase is defined
-        if (typeof supabase === 'undefined') {
-            document.getElementById('errorMsg').textContent = 'Configuration error. Please refresh and try again.';
-            document.getElementById('errorMsg').style.display = 'block';
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://hditdeoutpexdsjlwifz.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_oE-yHn0xup-Srsvod5o4vA_VQ9gezw3';
+        
+        // Initialize Supabase
+        const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // Clear old session
+        localStorage.clear();
+        
+        // Login function
+        async function handleLogin(email, password, rememberMe) {
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) {
+                    return { success: false, error: error.message };
+                }
+                
+                if (data.session) {
+                    localStorage.setItem('admin_logged_in', 'true');
+                    localStorage.setItem('session', JSON.stringify(data.session));
+                    if (rememberMe) {
+                        localStorage.setItem('admin_remembered', 'true');
+                    }
+                    return { success: true };
+                }
+                
+                return { success: false, error: 'Unknown error' };
+            } catch (err) {
+                return { success: false, error: err.message };
+            }
         }
         
+        // Form submit handler
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -66,8 +108,10 @@
             const password = document.getElementById('adminPassword').value;
             const rememberMe = document.getElementById('rememberMe').checked;
             const errorDiv = document.getElementById('errorMsg');
+            const successDiv = document.getElementById('successMsg');
             
             errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
             
             if (!email || !password) {
                 errorDiv.textContent = 'Please enter email and password';
@@ -79,19 +123,16 @@
             loginBtn.disabled = true;
             loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
             
-            try {
-                const success = await adminLogin(email, password, rememberMe);
-                
-                if (success) {
+            const result = await handleLogin(email, password, rememberMe);
+            
+            if (result.success) {
+                successDiv.textContent = 'Login successful! Redirecting...';
+                successDiv.style.display = 'block';
+                setTimeout(() => {
                     window.location.href = 'dashboard.html';
-                } else {
-                    errorDiv.textContent = 'Invalid email or password. Please try again.';
-                    errorDiv.style.display = 'block';
-                    loginBtn.disabled = false;
-                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-                }
-            } catch (err) {
-                errorDiv.textContent = 'Error: ' + err.message;
+                }, 1000);
+            } else {
+                errorDiv.textContent = 'Login failed: ' + result.error;
                 errorDiv.style.display = 'block';
                 loginBtn.disabled = false;
                 loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
