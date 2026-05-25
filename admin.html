@@ -11,7 +11,7 @@
             box-sizing: border-box;
         }
         body {
-            font-family: system-ui, sans-serif;
+            font-family: system-ui, -apple-system, sans-serif;
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             min-height: 100vh;
             display: flex;
@@ -19,68 +19,99 @@
             justify-content: center;
             padding: 20px;
         }
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+        }
         .login-card {
             background: white;
             border-radius: 16px;
             padding: 40px;
-            width: 100%;
-            max-width: 400px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
         .login-header {
             text-align: center;
             margin-bottom: 30px;
         }
+        .login-header .logo {
+            font-size: 48px;
+            color: #c0392b;
+        }
         .login-header h2 {
             margin: 10px 0;
             color: #1a1a2e;
         }
-        input {
-            width: 100%;
-            padding: 14px;
+        .input-group {
             margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
             font-size: 16px;
         }
-        button {
+        .input-group input:focus {
+            border-color: #c0392b;
+            outline: none;
+        }
+        .login-btn {
             width: 100%;
             padding: 14px;
             background: #c0392b;
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
         }
-        .message {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 6px;
-            text-align: center;
-            display: none;
+        .login-btn:hover {
+            background: #a93226;
         }
-        .error {
+        .message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+            text-align: center;
+        }
+        .message.error {
             background: #ffebee;
             color: #c0392b;
             display: block;
         }
+        .login-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #999;
+        }
     </style>
 </head>
 <body>
-    <div class="login-card">
-        <div class="login-header">
-            <div style="font-size: 48px;">🌍</div>
-            <h2>The Farhan World</h2>
-            <p>Admin Panel</p>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo">🌍</div>
+                <h2>The Farhan World</h2>
+                <p>Admin Panel</p>
+            </div>
+            <div id="messageBox" class="message"></div>
+            <form id="loginForm">
+                <div class="input-group">
+                    <input type="email" id="email" placeholder="Email Address" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="login-btn">Login</button>
+            </form>
+            <div class="login-footer">
+                Secure Admin Access
+            </div>
         </div>
-        <div id="message" class="message"></div>
-        <form id="loginForm">
-            <input type="email" id="email" placeholder="Email Address" required>
-            <input type="password" id="password" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -90,21 +121,35 @@
         if (localStorage.getItem('admin_logged_in') === 'true') {
             window.location.href = 'dashboard.html';
         }
-
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        
+        const form = document.getElementById('loginForm');
+        const messageBox = document.getElementById('messageBox');
+        
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('email').value;
+            
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
-            const msgDiv = document.getElementById('message');
+            
+            if (!email || !password) {
+                messageBox.textContent = 'Please enter email and password';
+                messageBox.className = 'message error';
+                return;
+            }
+            
+            const loginBtn = document.querySelector('.login-btn');
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Logging in...';
             
             try {
                 await firebase.auth().signInWithEmailAndPassword(email, password);
                 localStorage.setItem('admin_logged_in', 'true');
                 window.location.href = 'dashboard.html';
             } catch (error) {
-                msgDiv.textContent = 'Invalid email or password';
-                msgDiv.className = 'message error';
-                setTimeout(() => msgDiv.className = 'message', 3000);
+                messageBox.textContent = 'Invalid email or password';
+                messageBox.className = 'message error';
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Login';
             }
         });
     </script>
