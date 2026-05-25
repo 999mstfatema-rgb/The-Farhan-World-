@@ -242,7 +242,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="firebase-config.js"></script>
     <script>
-        // ONLY localStorage check - NO onAuthStateChanged
+        // Login check (safe version - no repeated redirect)
         if (localStorage.getItem('admin_logged_in') !== 'true') {
             window.location.href = 'admin.html';
         }
@@ -320,10 +320,10 @@
                 html += `
                     <div class="link-item">
                         <div class="platform">
-                            <i class="${platform.icon}" style="color:${platform.color};"></i> ${platform.name}:
+                            <i class="\( {platform.icon}" style="color: \){platform.color};"></i> ${platform.name}:
                         </div>
                         <div class="url">
-                            ${url ? `<a href="${url}" target="_blank">${url}</a>` : '<span style="color:#999;">Not set</span>'}
+                            \( {url ? `<a href=" \){url}" target="_blank">${url}</a>` : '<span style="color:#999;">Not set</span>'}
                         </div>
                     </div>
                 `;
@@ -350,6 +350,7 @@
             window.location.href = 'admin.html';
         }
         
+        // Page load
         loadSocialLinks();
         loadPosts();
     </script>
