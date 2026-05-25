@@ -11,7 +11,7 @@
             box-sizing: border-box;
         }
         body {
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: system-ui, sans-serif;
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             min-height: 100vh;
             display: flex;
@@ -19,190 +19,92 @@
             justify-content: center;
             padding: 20px;
         }
-        .login-container {
-            width: 100%;
-            max-width: 400px;
-        }
         .login-card {
             background: white;
             border-radius: 16px;
             padding: 40px;
+            width: 100%;
+            max-width: 400px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
         .login-header {
             text-align: center;
             margin-bottom: 30px;
         }
-        .login-header .logo {
-            font-size: 48px;
-            color: #c0392b;
-        }
         .login-header h2 {
             margin: 10px 0;
             color: #1a1a2e;
         }
-        .input-group {
-            margin-bottom: 20px;
-        }
-        .input-group input {
+        input {
             width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
             font-size: 16px;
         }
-        .input-group input:focus {
-            border-color: #c0392b;
-            outline: none;
-        }
-        .remember-me {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-        .login-btn {
+        button {
             width: 100%;
             padding: 14px;
             background: #c0392b;
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
         }
-        .login-btn:hover {
-            background: #a93226;
-        }
         .message {
-            margin-top: 20px;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 14px;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
             display: none;
         }
-        .message.error {
+        .error {
             background: #ffebee;
             color: #c0392b;
             display: block;
         }
-        .message.success {
-            background: #e8f5e9;
-            color: #2e7d32;
-            display: block;
-        }
-        .login-footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 12px;
-            color: #999;
-        }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-card">
-            <div class="login-header">
-                <div class="logo">🌍</div>
-                <h2>The Farhan World</h2>
-                <p>Admin Panel</p>
-            </div>
-            <div id="messageBox" class="message"></div>
-            <form id="loginForm">
-                <div class="input-group">
-                    <input type="email" id="email" placeholder="Email Address" required>
-                </div>
-                <div class="input-group">
-                    <input type="password" id="password" placeholder="Password" required>
-                </div>
-                <div class="remember-me">
-                    <input type="checkbox" id="remember">
-                    <label for="remember">Remember me</label>
-                </div>
-                <button type="submit" class="login-btn">Login</button>
-            </form>
-            <div class="login-footer">
-                Secure Admin Access
-            </div>
+    <div class="login-card">
+        <div class="login-header">
+            <div style="font-size: 48px;">🌍</div>
+            <h2>The Farhan World</h2>
+            <p>Admin Panel</p>
         </div>
+        <div id="message" class="message"></div>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Email Address" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="firebase-config.js"></script>
     <script>
-        // Check if already logged in
         if (localStorage.getItem('admin_logged_in') === 'true') {
             window.location.href = 'dashboard.html';
         }
-        
-        const form = document.getElementById('loginForm');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const rememberCheck = document.getElementById('remember');
-        const messageBox = document.getElementById('messageBox');
-        
-        let isLoggingIn = false;
-        
-        function showMessage(text, type) {
-            messageBox.textContent = text;
-            messageBox.className = 'message ' + type;
-            setTimeout(() => {
-                messageBox.className = 'message';
-            }, 3000);
-        }
-        
-        form.addEventListener('submit', async (e) => {
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            if (isLoggingIn) return;
-            
-            const email = emailInput.value.trim();
-            const password = passwordInput.value;
-            const remember = rememberCheck.checked;
-            
-            if (!email || !password) {
-                showMessage('Please enter email and password', 'error');
-                return;
-            }
-            
-            isLoggingIn = true;
-            const loginBtn = document.querySelector('.login-btn');
-            loginBtn.disabled = true;
-            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const msgDiv = document.getElementById('message');
             
             try {
-                // REAL FIREBASE AUTHENTICATION
-                const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
-                
-                if (userCredential.user) {
-                    localStorage.setItem('admin_logged_in', 'true');
-                    if (remember) {
-                        localStorage.setItem('admin_remembered', 'true');
-                    }
-                    showMessage('Login successful! Redirecting...', 'success');
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1000);
-                } else {
-                    showMessage('Invalid email or password', 'error');
-                    loginBtn.disabled = false;
-                    loginBtn.innerHTML = 'Login';
-                    isLoggingIn = false;
-                }
+                await firebase.auth().signInWithEmailAndPassword(email, password);
+                localStorage.setItem('admin_logged_in', 'true');
+                window.location.href = 'dashboard.html';
             } catch (error) {
-                console.error('Login error:', error);
-                let errorMsg = 'Invalid email or password';
-                if (error.code === 'auth/user-not-found') {
-                    errorMsg = 'User not found. Please check email.';
-                } else if (error.code === 'auth/wrong-password') {
-                    errorMsg = 'Wrong password. Please try again.';
-                }
-                showMessage(errorMsg, 'error');
-                loginBtn.disabled = false;
-                loginBtn.innerHTML = 'Login';
-                isLoggingIn = false;
+                msgDiv.textContent = 'Invalid email or password';
+                msgDiv.className = 'message error';
+                setTimeout(() => msgDiv.className = 'message', 3000);
             }
         });
     </script>
