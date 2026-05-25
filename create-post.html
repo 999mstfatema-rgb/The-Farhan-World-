@@ -36,9 +36,7 @@
             margin-bottom: 8px;
             font-weight: 500;
         }
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 12px;
             border: 1px solid #ddd;
@@ -65,6 +63,13 @@
             background: #95a5a6;
             color: white;
         }
+        .btn-translate {
+            background: #27ae60;
+            color: white;
+            margin-top: 5px;
+            font-size: 12px;
+            padding: 6px 12px;
+        }
         .form-actions {
             display: flex;
             gap: 15px;
@@ -75,6 +80,11 @@
             margin-bottom: 20px;
             color: #c0392b;
             text-decoration: none;
+        }
+        .translate-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
         }
         @media (max-width: 768px) {
             .form-row {
@@ -92,10 +102,12 @@
                 <div class="form-group">
                     <label>Headline *</label>
                     <input type="text" id="headline" required>
+                    <button type="button" class="btn-translate" onclick="translateText('headline')">🌐 Translate Headline</button>
                 </div>
                 <div class="form-group">
                     <label>Title / Subtitle</label>
                     <input type="text" id="title">
+                    <button type="button" class="btn-translate" onclick="translateText('title')">🌐 Translate Title</button>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
@@ -125,14 +137,17 @@
                 <div class="form-group">
                     <label>Image Caption</label>
                     <textarea id="caption" rows="2" placeholder="Caption under image"></textarea>
+                    <button type="button" class="btn-translate" onclick="translateText('caption')">🌐 Translate Caption</button>
                 </div>
                 <div class="form-group">
                     <label>Short Description *</label>
                     <textarea id="excerpt" rows="3" required></textarea>
+                    <button type="button" class="btn-translate" onclick="translateText('excerpt')">🌐 Translate Excerpt</button>
                 </div>
                 <div class="form-group">
                     <label>Full Content *</label>
                     <textarea id="content" rows="10" required></textarea>
+                    <button type="button" class="btn-translate" onclick="translateText('content')">🌐 Translate Content</button>
                 </div>
                 <div class="form-group">
                     <label>Tags (comma separated)</label>
@@ -149,6 +164,49 @@
     <script>
         if (localStorage.getItem('admin_logged_in') !== 'true') {
             window.location.href = 'admin.html';
+        }
+        
+        // Translation function using MyMemory API (free, no key needed)
+        async function translateText(fieldId) {
+            const textarea = document.getElementById(fieldId);
+            const text = textarea.value;
+            
+            if (!text.trim()) {
+                alert('Please enter some text to translate');
+                return;
+            }
+            
+            // Detect language (simple check for Bengali characters)
+            const bengaliRegex = /[\u0980-\u09FF]/;
+            const isBengali = bengaliRegex.test(text);
+            
+            // Set target language
+            const targetLang = isBengali ? 'en' : 'bn';
+            const sourceLang = isBengali ? 'bn' : 'en';
+            
+            // Show loading
+            const originalBtn = event.target;
+            originalBtn.textContent = '🔄 Translating...';
+            originalBtn.disabled = true;
+            
+            try {
+                // Using free MyMemory API
+                const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${targetLang}`);
+                const data = await response.json();
+                
+                if (data && data.responseData && data.responseData.translatedText) {
+                    textarea.value = data.responseData.translatedText;
+                    alert(`Translated from ${isBengali ? 'Bengali' : 'English'} to ${isBengali ? 'English' : 'Bengali'}!`);
+                } else {
+                    alert('Translation failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Translation error:', error);
+                alert('Translation service error. Please try again later.');
+            } finally {
+                originalBtn.textContent = '🌐 Translate';
+                originalBtn.disabled = false;
+            }
         }
         
         document.getElementById('postForm').addEventListener('submit', (e) => {
