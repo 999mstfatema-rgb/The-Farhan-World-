@@ -63,3 +63,5 @@ function getSocialLinks() {
 function saveSocialLinks(links) {
     Object.keys(links).forEach(key => localStorage.setItem(`social_${key}`, links[key]));
 }
+
+console.log("Firebase loaded");
