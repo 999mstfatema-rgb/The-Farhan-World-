@@ -120,93 +120,61 @@
             background: #e74c3c;
             color: white;
         }
-        .social-list {
+        .social-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
             margin-bottom: 20px;
         }
-        .social-item {
+        .social-form input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+        .social-form button {
+            grid-column: span 2;
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .current-links {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .current-links h4 {
+            margin-bottom: 15px;
+        }
+        .link-item {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 12px;
-            border-bottom: 1px solid #eee;
+            gap: 15px;
+            padding: 8px 0;
             flex-wrap: wrap;
-            gap: 10px;
         }
-        .social-item .platform {
+        .link-item .platform {
+            width: 100px;
             font-weight: 600;
-            width: 120px;
         }
-        .social-item .link {
+        .link-item .url {
             color: #3498db;
             word-break: break-all;
             flex: 1;
         }
-        .social-item .link a {
+        .link-item .url a {
             color: #3498db;
             text-decoration: none;
         }
-        .social-item .link a:hover {
-            text-decoration: underline;
-        }
-        .edit-social-btn {
-            background: #27ae60;
-            color: white;
-            border: none;
-            padding: 6px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .edit-social-form {
-            display: none;
-            margin-top: 20px;
-            padding: 20px;
-            background: #f9f9f9;
-            border-radius: 10px;
-            border: 1px solid #ddd;
-        }
-        .edit-social-form.active {
-            display: block;
-        }
-        .edit-social-form h4 {
-            margin-bottom: 15px;
-        }
-        .edit-social-form input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .edit-social-form .form-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        .save-btn {
-            background: #27ae60;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .cancel-btn {
-            background: #95a5a6;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
         @media (max-width: 768px) {
-            .stats {
+            .stats, .social-form {
                 grid-template-columns: 1fr;
             }
-            .social-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .social-item .platform {
-                width: auto;
+            .social-form button {
+                grid-column: span 1;
             }
         }
     </style>
@@ -253,15 +221,18 @@
 
         <div class="social-section">
             <h2>🔗 Social Media Links</h2>
-            <div id="socialList"></div>
-            <div id="editSocialForm" class="edit-social-form">
-                <h4>✏️ Edit Social Media Link</h4>
-                <input type="text" id="editPlatform" readonly style="background:#f0f0f0;">
-                <input type="url" id="editUrl" placeholder="Enter URL (https://...)">
-                <div class="form-buttons">
-                    <button class="save-btn" onclick="saveSocialEdit()">💾 Save</button>
-                    <button class="cancel-btn" onclick="cancelEdit()">Cancel</button>
-                </div>
+            <form id="socialForm" class="social-form">
+                <input type="url" id="facebook" placeholder="Facebook URL (https://facebook.com/yourpage)">
+                <input type="url" id="instagram" placeholder="Instagram URL (https://instagram.com/username)">
+                <input type="url" id="twitter" placeholder="Twitter URL (https://twitter.com/username)">
+                <input type="url" id="whatsapp" placeholder="WhatsApp URL (https://wa.me/phone)">
+                <input type="url" id="youtube" placeholder="YouTube URL (https://youtube.com/@channel)">
+                <button type="submit">💾 Save All Social Links</button>
+            </form>
+            
+            <div class="current-links">
+                <h4>📱 Current Social Links:</h4>
+                <div id="currentSocialLinks"></div>
             </div>
         </div>
     </div>
@@ -271,77 +242,54 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="firebase-config.js"></script>
     <script>
-        let currentEditPlatform = null;
-        let currentEditPlatformName = null;
-        let pageLoaded = false;
-        
-        // Immediately check session storage first
-        const isLoggedIn = sessionStorage.getItem('admin_session_valid') === 'true' || localStorage.getItem('admin_logged_in') === 'true';
-        
-        if (!isLoggedIn) {
-            // Verify with Firebase
-            firebase.auth().onAuthStateChanged((user) => {
-                if (!user) {
-                    window.location.href = 'admin.html';
-                } else {
-                    sessionStorage.setItem('admin_session_valid', 'true');
-                    if (!pageLoaded) {
-                        pageLoaded = true;
-                        loadSocialLinks();
-                        loadPosts();
-                    }
-                }
-            });
-        } else {
-            // Already logged in, load immediately
-            if (!pageLoaded) {
-                pageLoaded = true;
-                loadSocialLinks();
-                loadPosts();
+        // Check if user is logged in - ONE TIME CHECK
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'admin.html';
             }
+        });
+        
+        // Also check localStorage
+        if (localStorage.getItem('admin_logged_in') !== 'true') {
+            window.location.href = 'admin.html';
         }
         
         async function loadPosts() {
-            try {
-                const posts = await getAllPosts();
-                
-                document.getElementById('totalPosts').textContent = posts.length;
-                const totalViews = posts.reduce((sum, p) => sum + (p.views || 0), 0);
-                document.getElementById('totalViews').textContent = totalViews;
-                
-                const container = document.getElementById('postsList');
-                
-                if (posts.length === 0) {
-                    container.innerHTML = '<p>No posts yet. <a href="create-post.html">Create your first post</a></p>';
-                    return;
-                }
-                
-                container.innerHTML = `
-                    <table>
-                        <thead>
-                            <tr><th>ID</th><th>Headline</th><th>Category</th><th>Date</th><th>Views</th><th>Actions</th></td>
-                        </thead>
-                        <tbody>
-                            ${posts.map(post => `
-                                <tr>
-                                    <td>${post.id.slice(0, 8)}...</td>
-                                    <td><strong>${post.headline}</strong></td>
-                                    <td>${post.category}</td>
-                                    <td>${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString() : 'New'}</td>
-                                    <td>${post.views || 0}</td>
-                                    <td>
-                                        <button class="edit-btn" onclick="editPost('${post.id}')">Edit</button>
-                                        <button class="delete-btn" onclick="deletePostConfirm('${post.id}')">Delete</button>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-            } catch (error) {
-                console.error('Error loading posts:', error);
-                document.getElementById('postsList').innerHTML = '<p>Error loading posts. Please refresh.</p>';
+            const posts = await getAllPosts();
+            
+            document.getElementById('totalPosts').textContent = posts.length;
+            const totalViews = posts.reduce((sum, p) => sum + (p.views || 0), 0);
+            document.getElementById('totalViews').textContent = totalViews;
+            
+            const container = document.getElementById('postsList');
+            
+            if (posts.length === 0) {
+                container.innerHTML = '<p>No posts yet. <a href="create-post.html">Create your first post</a></p>';
+                return;
             }
+            
+            container.innerHTML = `
+                <table>
+                    <thead>
+                        <tr><th>ID</th><th>Headline</th><th>Category</th><th>Date</th><th>Views</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                        ${posts.map(post => `
+                            <tr>
+                                <td>${post.id.slice(0, 8)}...</td>
+                                <td><strong>${post.headline}</strong></td>
+                                <td>${post.category}</td>
+                                <td>${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString() : 'New'}</td>
+                                <td>${post.views || 0}</td>
+                                <td>
+                                    <button class="edit-btn" onclick="editPost('${post.id}')">Edit</button>
+                                    <button class="delete-btn" onclick="deletePostConfirm('${post.id}')">Delete</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
         }
         
         function editPost(id) {
@@ -351,90 +299,69 @@
         async function deletePostConfirm(id) {
             if (confirm('Delete this post?')) {
                 await deletePost(id);
-                await loadPosts();
+                loadPosts();
                 alert('Post deleted!');
             }
         }
         
         function loadSocialLinks() {
-            try {
-                const links = getSocialLinks();
-                const socialContainer = document.getElementById('socialList');
-                
-                const socialPlatforms = [
-                    { key: 'facebook', name: 'Facebook', icon: 'fab fa-facebook-f', color: '#1877f2' },
-                    { key: 'instagram', name: 'Instagram', icon: 'fab fa-instagram', color: '#e4405f' },
-                    { key: 'twitter', name: 'Twitter', icon: 'fab fa-twitter', color: '#1da1f2' },
-                    { key: 'whatsapp', name: 'WhatsApp', icon: 'fab fa-whatsapp', color: '#25d366' },
-                    { key: 'youtube', name: 'YouTube', icon: 'fab fa-youtube', color: '#ff0000' }
-                ];
-                
-                let html = '<div class="social-list">';
-                socialPlatforms.forEach(platform => {
-                    const url = links[platform.key];
-                    html += `
-                        <div class="social-item">
-                            <div class="platform">
-                                <i class="${platform.icon}" style="color:${platform.color}; width:25px;"></i> ${platform.name}:
-                            </div>
-                            <div class="link">
-                                ${url ? `<a href="${url}" target="_blank">${url}</a>` : '<span style="color:#999;">Not configured</span>'}
-                            </div>
-                            <button class="edit-social-btn" onclick="openEditForm('${platform.key}', '${platform.name}', '${url || ''}')">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                        </div>
-                    `;
-                });
-                html += '</div>';
-                
-                socialContainer.innerHTML = html;
-            } catch (error) {
-                console.error('Error loading social links:', error);
-                document.getElementById('socialList').innerHTML = '<p>Error loading social links.</p>';
-            }
-        }
-        
-        function openEditForm(key, name, currentUrl) {
-            currentEditPlatform = key;
-            currentEditPlatformName = name;
-            const form = document.getElementById('editSocialForm');
-            document.getElementById('editPlatform').value = name;
-            document.getElementById('editUrl').value = currentUrl;
-            form.classList.add('active');
-            form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-        
-        function saveSocialEdit() {
-            const newUrl = document.getElementById('editUrl').value.trim();
+            const links = getSocialLinks();
             
-            if (currentEditPlatform) {
-                const links = getSocialLinks();
-                links[currentEditPlatform] = newUrl;
-                saveSocialLinks(links);
-                loadSocialLinks();
-                cancelEdit();
-                alert(`${currentEditPlatformName} link updated successfully!`);
-            }
+            document.getElementById('facebook').value = links.facebook || '';
+            document.getElementById('instagram').value = links.instagram || '';
+            document.getElementById('twitter').value = links.twitter || '';
+            document.getElementById('whatsapp').value = links.whatsapp || '';
+            document.getElementById('youtube').value = links.youtube || '';
+            
+            // Display current links
+            const socialPlatforms = [
+                { key: 'facebook', name: 'Facebook', icon: 'fab fa-facebook-f', color: '#1877f2' },
+                { key: 'instagram', name: 'Instagram', icon: 'fab fa-instagram', color: '#e4405f' },
+                { key: 'twitter', name: 'Twitter', icon: 'fab fa-twitter', color: '#1da1f2' },
+                { key: 'whatsapp', name: 'WhatsApp', icon: 'fab fa-whatsapp', color: '#25d366' },
+                { key: 'youtube', name: 'YouTube', icon: 'fab fa-youtube', color: '#ff0000' }
+            ];
+            
+            let html = '';
+            socialPlatforms.forEach(platform => {
+                const url = links[platform.key];
+                html += `
+                    <div class="link-item">
+                        <div class="platform">
+                            <i class="${platform.icon}" style="color:${platform.color};"></i> ${platform.name}:
+                        </div>
+                        <div class="url">
+                            ${url ? `<a href="${url}" target="_blank">${url}</a>` : '<span style="color:#999;">Not set</span>'}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('currentSocialLinks').innerHTML = html;
         }
         
-        function cancelEdit() {
-            const form = document.getElementById('editSocialForm');
-            form.classList.remove('active');
-            currentEditPlatform = null;
-            currentEditPlatformName = null;
-            document.getElementById('editUrl').value = '';
-        }
+        document.getElementById('socialForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            saveSocialLinks({
+                facebook: document.getElementById('facebook').value,
+                instagram: document.getElementById('instagram').value,
+                twitter: document.getElementById('twitter').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                youtube: document.getElementById('youtube').value
+            });
+            loadSocialLinks();
+            alert('Social links saved successfully!');
+        });
         
         function logout() {
-            sessionStorage.removeItem('admin_session_valid');
             localStorage.removeItem('admin_logged_in');
             firebase.auth().signOut().then(() => {
                 window.location.href = 'admin.html';
-            }).catch(() => {
-                window.location.href = 'admin.html';
             });
         }
+        
+        loadSocialLinks();
+        loadPosts();
     </script>
 </body>
 </html>
