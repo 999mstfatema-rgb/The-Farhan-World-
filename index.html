@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>The Farhan World | Global News Hub</title>
+    <meta name="description" content="The Farhan World - Your trusted source for latest news, breaking news, and in-depth analysis from around the world.">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,8 +14,14 @@
 <!-- Live TV Bar -->
 <div class="live-tv-bar">
     <div class="container">
-        <div class="live-indicator"><span class="live-dot"></span><span class="live-text">LIVE</span></div>
-        <div class="live-ticker"><span class="ticker-label">BREAKING:</span><div class="ticker-scroll" id="liveTicker"></div></div>
+        <div class="live-indicator">
+            <span class="live-dot"></span>
+            <span class="live-text">LIVE</span>
+        </div>
+        <div class="live-ticker">
+            <span class="ticker-label">BREAKING:</span>
+            <div class="ticker-scroll" id="liveTicker"></div>
+        </div>
         <div class="datetime-show" id="currentDateTime"></div>
     </div>
 </div>
@@ -22,7 +29,12 @@
 <!-- Navigation -->
 <nav class="navbar">
     <div class="container">
-        <div class="nav-brand"><a href="index.html"><span class="brand-icon"><i class="fas fa-tv"></i></span><span class="brand-text">THE FARHAN WORLD</span></a></div>
+        <div class="nav-brand">
+            <a href="index.html">
+                <span class="brand-icon"><i class="fas fa-tv"></i></span>
+                <span class="brand-text">THE FARHAN WORLD</span>
+            </a>
+        </div>
         <div class="nav-menu">
             <ul>
                 <li><a href="index.html" class="active">HOME</a></li>
@@ -81,7 +93,9 @@
                     </div>
                 </div>
                 <div class="news-grid" id="newsGrid"></div>
-                <div class="load-more"><button id="loadMoreBtn">LOAD MORE <i class="fas fa-arrow-down"></i></button></div>
+                <div class="load-more">
+                    <button id="loadMoreBtn">LOAD MORE <i class="fas fa-arrow-down"></i></button>
+                </div>
             </div>
             
             <aside class="sidebar">
