@@ -14,7 +14,7 @@ const db = firebase.firestore();
 
 // ========== POST FUNCTIONS ==========
 
-// Get ALL posts (without status filter) - for homepage
+// Get ALL posts (no filter) - for homepage
 async function getAllPosts() {
     try {
         const snapshot = await db.collection('posts').orderBy('createdAt', 'desc').get();
@@ -25,7 +25,7 @@ async function getAllPosts() {
     }
 }
 
-// Get published posts only - for filtering
+// Get published posts only
 async function getPublishedPosts() {
     try {
         const snapshot = await db.collection('posts').where('status', '==', 'published').orderBy('createdAt', 'desc').get();
@@ -50,6 +50,7 @@ async function getPostsByCategory(category) {
 // Get single post by ID
 async function getPostById(id) {
     try {
+        if (!id) return null;
         const doc = await db.collection('posts').doc(id).get();
         if (!doc.exists) return null;
         return { id: doc.id, ...doc.data() };
