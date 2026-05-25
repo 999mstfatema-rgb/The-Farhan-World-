@@ -273,21 +273,33 @@
     <script>
         let currentEditPlatform = null;
         let currentEditPlatformName = null;
-        let authChecked = false;
+        let pageLoaded = false;
         
-        // Check if user is logged in - ONE TIME ONLY
-        firebase.auth().onAuthStateChanged((user) => {
-            if (authChecked) return;
-            authChecked = true;
-            
-            if (!user) {
-                window.location.href = 'admin.html';
-            } else {
-                // User is logged in, load the page
+        // Immediately check session storage first
+        const isLoggedIn = sessionStorage.getItem('admin_session_valid') === 'true' || localStorage.getItem('admin_logged_in') === 'true';
+        
+        if (!isLoggedIn) {
+            // Verify with Firebase
+            firebase.auth().onAuthStateChanged((user) => {
+                if (!user) {
+                    window.location.href = 'admin.html';
+                } else {
+                    sessionStorage.setItem('admin_session_valid', 'true');
+                    if (!pageLoaded) {
+                        pageLoaded = true;
+                        loadSocialLinks();
+                        loadPosts();
+                    }
+                }
+            });
+        } else {
+            // Already logged in, load immediately
+            if (!pageLoaded) {
+                pageLoaded = true;
                 loadSocialLinks();
                 loadPosts();
             }
-        });
+        }
         
         async function loadPosts() {
             try {
@@ -307,7 +319,7 @@
                 container.innerHTML = `
                     <table>
                         <thead>
-                            <tr><th>ID</th><th>Headline</th><th>Category</th><th>Date</th><th>Views</th><th>Actions</th></tr>
+                            <tr><th>ID</th><th>Headline</th><th>Category</th><th>Date</th><th>Views</th><th>Actions</th></td>
                         </thead>
                         <tbody>
                             ${posts.map(post => `
@@ -415,10 +427,11 @@
         }
         
         function logout() {
+            sessionStorage.removeItem('admin_session_valid');
+            localStorage.removeItem('admin_logged_in');
             firebase.auth().signOut().then(() => {
                 window.location.href = 'admin.html';
-            }).catch((error) => {
-                console.error('Logout error:', error);
+            }).catch(() => {
                 window.location.href = 'admin.html';
             });
         }
