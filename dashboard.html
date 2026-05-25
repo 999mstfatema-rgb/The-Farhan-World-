@@ -76,12 +76,21 @@
             background: #c0392b;
             color: white;
         }
-        .posts-section {
+        .btn-secondary {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-info {
+            background: #3498db;
+            color: white;
+        }
+        .posts-section, .social-section {
             background: white;
             padding: 20px;
             border-radius: 10px;
+            margin-bottom: 30px;
         }
-        .posts-section h2 {
+        .posts-section h2, .social-section h2 {
             margin-bottom: 20px;
         }
         table {
@@ -111,12 +120,25 @@
             background: #e74c3c;
             color: white;
         }
+        .social-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .social-form input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+        .social-form button {
+            grid-column: span 2;
+        }
         @media (max-width: 768px) {
-            .stats {
+            .stats, .social-form {
                 grid-template-columns: 1fr;
             }
-            table {
-                font-size: 12px;
+            .social-form button {
+                grid-column: span 1;
             }
         }
     </style>
@@ -153,12 +175,24 @@
         
         <div class="actions">
             <a href="create-post.html" class="btn btn-primary">➕ Create New Post</a>
-            <button class="btn btn-primary" onclick="loadPosts()" style="background:#3498db;">🔄 Refresh</button>
+            <button class="btn btn-info" onclick="loadPosts()">🔄 Refresh Posts</button>
         </div>
         
         <div class="posts-section">
             <h2>📝 Manage Posts</h2>
             <div id="postsList"></div>
+        </div>
+
+        <div class="social-section">
+            <h2>🔗 Social Media Links</h2>
+            <form id="socialForm" class="social-form">
+                <input type="url" id="facebook" placeholder="Facebook URL">
+                <input type="url" id="instagram" placeholder="Instagram URL">
+                <input type="url" id="twitter" placeholder="Twitter URL">
+                <input type="url" id="whatsapp" placeholder="WhatsApp URL">
+                <input type="url" id="youtube" placeholder="YouTube URL">
+                <button type="submit" class="btn btn-primary">💾 Save Social Links</button>
+            </form>
         </div>
     </div>
 
@@ -166,6 +200,26 @@
         if (localStorage.getItem('admin_logged_in') !== 'true') {
             window.location.href = 'admin.html';
         }
+        
+        // Load Social Links
+        function loadSocialLinks() {
+            document.getElementById('facebook').value = localStorage.getItem('social_facebook') || '';
+            document.getElementById('instagram').value = localStorage.getItem('social_instagram') || '';
+            document.getElementById('twitter').value = localStorage.getItem('social_twitter') || '';
+            document.getElementById('whatsapp').value = localStorage.getItem('social_whatsapp') || '';
+            document.getElementById('youtube').value = localStorage.getItem('social_youtube') || '';
+        }
+        
+        // Save Social Links
+        document.getElementById('socialForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            localStorage.setItem('social_facebook', document.getElementById('facebook').value);
+            localStorage.setItem('social_instagram', document.getElementById('instagram').value);
+            localStorage.setItem('social_twitter', document.getElementById('twitter').value);
+            localStorage.setItem('social_whatsapp', document.getElementById('whatsapp').value);
+            localStorage.setItem('social_youtube', document.getElementById('youtube').value);
+            alert('Social links saved successfully!');
+        });
         
         function loadPosts() {
             const posts = JSON.parse(localStorage.getItem('farhan_posts') || '[]');
@@ -224,6 +278,7 @@
             window.location.href = 'admin.html';
         }
         
+        loadSocialLinks();
         loadPosts();
     </script>
 </body>
