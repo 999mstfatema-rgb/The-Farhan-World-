@@ -148,10 +148,9 @@
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="firebase-config.js"></script>
     <script>
-        if (!isAdminLoggedIn()) {
+        if (localStorage.getItem('admin_logged_in') !== 'true') {
             window.location.href = 'admin.html';
         }
         
@@ -173,7 +172,7 @@
             const success = await createPost(post);
             
             if (success) {
-                alert('Post created successfully! Everyone can now see it.');
+                alert('Post created successfully!');
                 window.location.href = 'dashboard.html';
             } else {
                 alert('Error creating post. Please try again.');
