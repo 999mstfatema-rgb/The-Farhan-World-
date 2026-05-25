@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Create Post - Admin Panel</title>
+    <link rel="stylesheet" href="admin-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="admin-dashboard-body">
+    <div class="admin-wrapper">
+        <aside class="admin-sidebar">
+            <div class="sidebar-header"><h3><i class="fas fa-globe-americas"></i> The Farhan World</h3><p>Admin Panel</p></div>
+            <nav class="admin-nav">
+                <ul>
+                    <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="create-post.html" class="active"><i class="fas fa-plus-circle"></i> Create Post</a></li>
+                    <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <main class="admin-main">
+            <div class="admin-header"><h1>Create New Post</h1><div class="admin-user"><span><i class="fas fa-user-circle"></i> Admin</span></div></div>
+            
+            <form id="createPostForm" class="post-form">
+                <div class="form-group"><label>Headline *</label><input type="text" id="postHeadline" required></div>
+                <div class="form-group"><label>Title / Subtitle</label><input type="text" id="postTitle"></div>
+                <div class="form-row">
+                    <div class="form-group"><label>Category *</label><select id="postCategory" required><option value="">Select</option><option value="world">World</option><option value="politics">Politics</option><option value="business">Business</option><option value="technology">Technology</option><option value="sports">Sports</option><option value="entertainment">Entertainment</option></select></div>
+                    <div class="form-group"><label>Status</label><select id="postStatus"><option value="published">Published</option><option value="draft">Draft</option></select></div>
+                </div>
+                <div class="form-group"><label>Image URL *</label><input type="text" id="postImage" placeholder="https://picsum.photos/800/500" required></div>
+                <div class="form-group"><label>Image Caption</label><textarea id="postCaption" rows="2" placeholder="Caption under image"></textarea></div>
+                <div class="form-group"><label>Short Description *</label><textarea id="postExcerpt" rows="3" required></textarea></div>
+                <div class="form-group"><label>Full Content *</label><textarea id="postContent" rows="10" required></textarea></div>
+                <div class="form-group"><label>Redirect Type</label><select id="redirectType"><option value="none">No redirect</option><option value="external">External URL</option></select></div>
+                <div class="form-group"><label>Redirect URL</label><input type="url" id="redirectUrl" placeholder="https://example.com"></div>
+                <div class="form-group"><label>Tags</label><input type="text" id="postTags" placeholder="news, world"></div>
+                <div class="form-actions"><button type="submit" class="btn-primary"><i class="fas fa-save"></i> Publish Post</button></div>
+            </form>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script>
+        if (!isAdminLoggedIn()) window.location.href = 'admin.html';
+        
+        document.getElementById('createPostForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const postData = {
+                title: document.getElementById('postTitle').value,
+                headline: document.getElementById('postHeadline').value,
+                category: document.getElementById('postCategory').value,
+                image: document.getElementById('postImage').value,
+                caption: document.getElementById('postCaption').value,
+                excerpt: document.getElementById('postExcerpt').value,
+                content: document.getElementById('postContent').value,
+                tags: document.getElementById('postTags').value.split(',').map(t => t.trim()),
+                status: document.getElementById('postStatus').value,
+                redirect_type: document.getElementById('redirectType').value,
+                redirect_url: document.getElementById('redirectUrl').value,
+                author: 'Admin'
+            };
+            
+            const success = await createPost(postData);
+            if (success) {
+                alert('Post created successfully!');
+                window.location.href = 'dashboard.html';
+            } else {
+                alert('Error creating post. Please try again.');
+            }
+        });
+        
+        document.getElementById('logoutBtn').addEventListener('click', async () => { await adminLogout(); });
+    </script>
+</body>
+</html>
