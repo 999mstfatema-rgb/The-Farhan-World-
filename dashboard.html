@@ -120,31 +120,95 @@
             background: #e74c3c;
             color: white;
         }
-        .social-form {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+        .social-list {
+            margin-bottom: 20px;
         }
-        .social-form input {
-            padding: 10px;
+        .social-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .social-item .platform {
+            font-weight: 600;
+            width: 120px;
+        }
+        .social-item .link {
+            color: #3498db;
+            word-break: break-all;
+            flex: 1;
+        }
+        .social-item .link a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .social-item .link a:hover {
+            text-decoration: underline;
+        }
+        .edit-social-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 6px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .edit-social-form {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
             border: 1px solid #ddd;
-            border-radius: 6px;
         }
-        .social-form button {
-            grid-column: span 2;
+        .edit-social-form.active {
+            display: block;
+        }
+        .edit-social-form h4 {
+            margin-bottom: 15px;
+            color: #1a1a2e;
+        }
+        .edit-social-form input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .edit-social-form .form-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .edit-social-form .save-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .edit-social-form .cancel-btn {
+            background: #95a5a6;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
         }
         @media (max-width: 768px) {
-            .stats, .social-form {
+            .stats {
                 grid-template-columns: 1fr;
             }
-            .social-form button {
-                grid-column: span 1;
+            .social-item {
+                flex-direction: column;
+                align-items: flex-start;
             }
-            table {
-                font-size: 12px;
-            }
-            th, td {
-                padding: 8px;
+            .social-item .platform {
+                width: auto;
             }
         }
     </style>
@@ -153,7 +217,7 @@
     <div class="container">
         <div class="header">
             <h1>📊 Admin Dashboard</h1>
-            <button class="logout-btn" onclick="adminLogout()">🚪 Logout</button>
+            <button class="logout-btn" onclick="logout()">🚪 Logout</button>
         </div>
         
         <div class="stats">
@@ -191,14 +255,16 @@
 
         <div class="social-section">
             <h2>🔗 Social Media Links</h2>
-            <form id="socialForm" class="social-form">
-                <input type="url" id="facebook" placeholder="Facebook URL">
-                <input type="url" id="instagram" placeholder="Instagram URL">
-                <input type="url" id="twitter" placeholder="Twitter URL">
-                <input type="url" id="whatsapp" placeholder="WhatsApp URL">
-                <input type="url" id="youtube" placeholder="YouTube URL">
-                <button type="submit" class="btn btn-primary">💾 Save Social Links</button>
-            </form>
+            <div id="socialList"></div>
+            <div id="editSocialForm" class="edit-social-form">
+                <h4>✏️ Edit Social Media Link</h4>
+                <input type="text" id="editPlatform" readonly style="background:#f0f0f0; font-weight:500;">
+                <input type="url" id="editUrl" placeholder="Enter URL (example: https://facebook.com/yourpage)">
+                <div class="form-buttons">
+                    <button class="save-btn" onclick="saveSocialEdit()">💾 Save Changes</button>
+                    <button class="cancel-btn" onclick="cancelEdit()">Cancel</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -207,9 +273,15 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="firebase-config.js"></script>
     <script>
-        if (!isAdminLoggedIn()) {
-            window.location.href = 'admin.html';
-        }
+        let currentEditPlatform = null;
+        let currentEditPlatformName = null;
+        
+        // Check if user is logged in
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'admin.html';
+            }
+        });
         
         async function loadPosts() {
             const posts = await getAllPosts();
@@ -226,7 +298,7 @@
             }
             
             container.innerHTML = `
-                <table>
+                </table>
                     <thead>
                         <tr><th>ID</th><th>Headline</th><th>Category</th><th>Date</th><th>Views</th><th>Actions</th></tr>
                     </thead>
@@ -263,25 +335,81 @@
         
         function loadSocialLinks() {
             const links = getSocialLinks();
-            document.getElementById('facebook').value = links.facebook || '';
-            document.getElementById('instagram').value = links.instagram || '';
-            document.getElementById('twitter').value = links.twitter || '';
-            document.getElementById('whatsapp').value = links.whatsapp || '';
-            document.getElementById('youtube').value = links.youtube || '';
+            const socialContainer = document.getElementById('socialList');
+            
+            const socialPlatforms = [
+                { key: 'facebook', name: 'Facebook', icon: 'fab fa-facebook-f', color: '#1877f2', placeholder: 'https://facebook.com/yourpage' },
+                { key: 'instagram', name: 'Instagram', icon: 'fab fa-instagram', color: '#e4405f', placeholder: 'https://instagram.com/yourusername' },
+                { key: 'twitter', name: 'Twitter', icon: 'fab fa-twitter', color: '#1da1f2', placeholder: 'https://twitter.com/yourusername' },
+                { key: 'whatsapp', name: 'WhatsApp', icon: 'fab fa-whatsapp', color: '#25d366', placeholder: 'https://wa.me/yourphonenumber' },
+                { key: 'youtube', name: 'YouTube', icon: 'fab fa-youtube', color: '#ff0000', placeholder: 'https://youtube.com/@yourchannel' }
+            ];
+            
+            let html = '<div class="social-list">';
+            socialPlatforms.forEach(platform => {
+                const url = links[platform.key];
+                html += `
+                    <div class="social-item">
+                        <div class="platform">
+                            <i class="${platform.icon}" style="color:${platform.color}; width:25px;"></i> ${platform.name}:
+                        </div>
+                        <div class="link">
+                            ${url ? `<a href="${url}" target="_blank">${url}</a>` : '<span style="color:#999;">Not configured</span>'}
+                        </div>
+                        <button class="edit-social-btn" onclick="openEditForm('${platform.key}', '${platform.name}', '${url || ''}', '${platform.placeholder}')">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            socialContainer.innerHTML = html;
         }
         
-        document.getElementById('socialForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            saveSocialLinks({
-                facebook: document.getElementById('facebook').value,
-                instagram: document.getElementById('instagram').value,
-                twitter: document.getElementById('twitter').value,
-                whatsapp: document.getElementById('whatsapp').value,
-                youtube: document.getElementById('youtube').value
-            });
-            alert('Social links saved!');
-        });
+        function openEditForm(key, name, currentUrl, placeholder) {
+            currentEditPlatform = key;
+            currentEditPlatformName = name;
+            const form = document.getElementById('editSocialForm');
+            document.getElementById('editPlatform').value = name;
+            const urlInput = document.getElementById('editUrl');
+            urlInput.value = currentUrl;
+            urlInput.placeholder = placeholder;
+            form.classList.add('active');
+            
+            // Scroll to form
+            form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
         
+        function saveSocialEdit() {
+            const newUrl = document.getElementById('editUrl').value.trim();
+            
+            if (currentEditPlatform) {
+                const links = getSocialLinks();
+                links[currentEditPlatform] = newUrl;
+                saveSocialLinks(links);
+                loadSocialLinks();
+                cancelEdit();
+                alert(`${currentEditPlatformName} link updated successfully!`);
+            }
+        }
+        
+        function cancelEdit() {
+            const form = document.getElementById('editSocialForm');
+            form.classList.remove('active');
+            currentEditPlatform = null;
+            currentEditPlatformName = null;
+            document.getElementById('editUrl').value = '';
+        }
+        
+        function logout() {
+            firebase.auth().signOut().then(() => {
+                localStorage.removeItem('admin_logged_in');
+                window.location.href = 'admin.html';
+            });
+        }
+        
+        // Initial load
         loadSocialLinks();
         loadPosts();
     </script>
