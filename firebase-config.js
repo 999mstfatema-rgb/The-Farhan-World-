@@ -12,14 +12,10 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-const auth = firebase.auth();
 
-// ========== ADMIN CREDENTIALS ==========
-const ADMIN_EMAIL = '999farhanislam@gmail.com';
-const ADMIN_PASSWORD = '@#$SaGoR@#$1';
+// ========== NO AUTO AUTH CHECK ==========
 
 // ========== POST FUNCTIONS ==========
-
 async function getAllPosts() {
     const snapshot = await db.collection('posts').orderBy('createdAt', 'desc').get();
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -27,11 +23,6 @@ async function getAllPosts() {
 
 async function getPublishedPosts() {
     const snapshot = await db.collection('posts').where('status', '==', 'published').orderBy('createdAt', 'desc').get();
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-}
-
-async function getPostsByCategory(category) {
-    const snapshot = await db.collection('posts').where('status', '==', 'published').where('category', '==', category).orderBy('createdAt', 'desc').get();
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
@@ -50,7 +41,7 @@ async function createPost(postData) {
         });
         return true;
     } catch (error) {
-        console.error('Error creating post:', error);
+        console.error('Error:', error);
         return false;
     }
 }
@@ -60,7 +51,7 @@ async function updatePost(id, updatedData) {
         await db.collection('posts').doc(id).update(updatedData);
         return true;
     } catch (error) {
-        console.error('Error updating post:', error);
+        console.error('Error:', error);
         return false;
     }
 }
@@ -70,17 +61,8 @@ async function deletePost(id) {
         await db.collection('posts').doc(id).delete();
         return true;
     } catch (error) {
-        console.error('Error deleting post:', error);
+        console.error('Error:', error);
         return false;
-    }
-}
-
-async function incrementViews(id) {
-    const post = await getPostById(id);
-    if (post) {
-        await db.collection('posts').doc(id).update({
-            views: (post.views || 0) + 1
-        });
     }
 }
 
@@ -97,55 +79,6 @@ async function getTrendingPosts(limit = 5) {
     const posts = await getPublishedPosts();
     return posts.sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, limit);
 }
-
-async function searchPosts(query) {
-    const posts = await getPublishedPosts();
-    return posts.filter(post => 
-        post.headline.toLowerCase().includes(query.toLowerCase()) ||
-        post.content.toLowerCase().includes(query.toLowerCase())
-    );
-}
-
-// ========== ADMIN AUTH ==========
-async function adminLogin(email, password, remember = true) {
-    try {
-        if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
-            return false;
-        }
-        await auth.signInWithEmailAndPassword(email, password);
-        localStorage.setItem('admin_logged_in', 'true');
-        if (remember) {
-            localStorage.setItem('admin_remembered', 'true');
-        }
-        return true;
-    } catch (error) {
-        console.error('Login error:', error);
-        return false;
-    }
-}
-
-function isAdminLoggedIn() {
-    return localStorage.getItem('admin_logged_in') === 'true';
-}
-
-async function adminLogout() {
-    await auth.signOut();
-    localStorage.removeItem('admin_logged_in');
-    localStorage.removeItem('admin_remembered');
-    window.location.href = 'admin.html';
-}
-
-auth.onAuthStateChanged((user) => {
-    if (user && user.email === ADMIN_EMAIL) {
-        localStorage.setItem('admin_logged_in', 'true');
-    } else {
-        if (window.location.pathname.includes('dashboard.html') || 
-            window.location.pathname.includes('create-post.html') ||
-            window.location.pathname.includes('edit-post.html')) {
-            window.location.href = 'admin.html';
-        }
-    }
-});
 
 // ========== SOCIAL LINKS ==========
 function getSocialLinks() {
