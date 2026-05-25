@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Post - The Farhan World</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<div class="live-tv-bar">
+    <div class="container">
+        <div class="live-indicator"><span class="live-dot"></span><span class="live-text">LIVE</span></div>
+        <div class="live-ticker"><span class="ticker-label">BREAKING:</span><div class="ticker-scroll" id="liveTicker"></div></div>
+        <div class="datetime-show" id="currentDateTime"></div>
+    </div>
+</div>
+
+<nav class="navbar">
+    <div class="container">
+        <div class="nav-brand"><a href="index.html"><span class="brand-icon"><i class="fas fa-tv"></i></span><span class="brand-text">THE FARHAN WORLD</span></a></div>
+        <div class="nav-menu">
+            <ul>
+                <li><a href="index.html">HOME</a></li>
+                <li><a href="category.html?cat=world">WORLD</a></li>
+                <li><a href="category.html?cat=politics">POLITICS</a></li>
+                <li><a href="category.html?cat=business">BUSINESS</a></li>
+                <li><a href="category.html?cat=technology">TECH</a></li>
+                <li><a href="category.html?cat=sports">SPORTS</a></li>
+                <li><a href="about.html">ABOUT</a></li>
+                <li><a href="contact.html">CONTACT</a></li>
+            </ul>
+        </div>
+        <div class="nav-actions">
+            <a href="admin.html" class="admin-btn"><i class="fas fa-user-shield"></i> ADMIN</a>
+        </div>
+    </div>
+</nav>
+
+<main class="main-content" style="padding: 50px 0;"></main>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-bottom"><p>&copy; 2026 THE FARHAN WORLD. All Rights Reserved.</p></div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get('id');
+    
+    async function loadPost() {
+        if (!postId) return;
+        const post = await getPostById(postId);
+        if (!post) return;
+        
+        if (post.redirect_type !== 'none' && post.redirect_url) {
+            window.location.href = post.redirect_url;
+            return;
+        }
+        
+        document.title = `${post.headline || post.title} - The Farhan World`;
+        await incrementViews(postId);
+        
+        const mainContent = document.querySelector('.main-content');
+        mainContent.innerHTML = `
+            <div class="container">
+                <article class="single-post">
+                    <div class="post-header">
+                        <h1>${post.headline || post.title}</h1>
+                        ${post.title && post.title !== post.headline ? `<h3 style="color:#666; margin-top:10px;">${post.title}</h3>` : ''}
+                        <div class="post-meta">
+                            <span><i class="fas fa-calendar"></i> ${new Date(post.created_at).toLocaleDateString()}</span>
+                            <span><i class="fas fa-user"></i> ${post.author || 'Admin'}</span>
+                            <span><i class="fas fa-eye"></i> ${(post.views || 0) + 1} views</span>
+                            <span><i class="fas fa-tag"></i> ${post.category}</span>
+                        </div>
+                    </div>
+                    <img src="${post.image}" alt="${post.headline}" style="width:100%; border-radius:10px; margin:20px 0;">
+                    ${post.caption ? `<div class="image-caption" style="text-align:center; color:#666; font-size:14px;">${post.caption}</div>` : ''}
+                    <div class="post-content"><p>${post.content}</p></div>
+                    ${post.tags && post.tags.length ? `<div class="post-tags">${post.tags.map(t => `<span class="tag">#${t}</span>`).join('')}</div>` : ''}
+                </article>
+            </div>
+        `;
+    }
+    
+    loadPost();
+</script>
+</body>
+</html>
