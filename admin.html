@@ -53,8 +53,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <script>
-        // Clear old session
-        localStorage.clear();
+        // Check if supabase is defined
+        if (typeof supabase === 'undefined') {
+            document.getElementById('errorMsg').textContent = 'Configuration error. Please refresh and try again.';
+            document.getElementById('errorMsg').style.display = 'block';
+        }
         
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -77,28 +80,12 @@
             loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
             
             try {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
+                const success = await adminLogin(email, password, rememberMe);
                 
-                if (error) {
-                    errorDiv.textContent = 'Login failed: ' + error.message;
-                    errorDiv.style.display = 'block';
-                    loginBtn.disabled = false;
-                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-                    return;
-                }
-                
-                if (data.session) {
-                    localStorage.setItem('admin_logged_in', 'true');
-                    localStorage.setItem('session', JSON.stringify(data.session));
-                    if (rememberMe) {
-                        localStorage.setItem('admin_remembered', 'true');
-                    }
+                if (success) {
                     window.location.href = 'dashboard.html';
                 } else {
-                    errorDiv.textContent = 'Login failed. Please try again.';
+                    errorDiv.textContent = 'Invalid email or password. Please try again.';
                     errorDiv.style.display = 'block';
                     loginBtn.disabled = false;
                     loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
