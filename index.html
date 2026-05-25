@@ -14,92 +14,72 @@
         }
         body {
             font-family: 'Inter', sans-serif;
-            background: #f4f6f9;
+            background: #f0f2f5;
             color: #1a1a2e;
         }
         .container {
-            max-width: 1280px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
         }
-        .live-tv-bar {
+        .top-bar {
             background: #000;
             color: white;
-            padding: 8px 0;
-            border-bottom: 2px solid #c0392b;
+            padding: 10px 0;
+            border-bottom: 3px solid #c0392b;
         }
-        .live-tv-bar .container {
+        .top-bar .container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
         }
-        .live-indicator {
+        .live {
             display: flex;
             align-items: center;
             gap: 8px;
-            background: rgba(192,57,43,0.2);
-            padding: 4px 12px;
-            border-radius: 30px;
         }
         .live-dot {
             width: 10px;
             height: 10px;
             background: #c0392b;
             border-radius: 50%;
-            animation: pulse 1.5s infinite;
+            animation: pulse 1s infinite;
         }
         @keyframes pulse {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; transform: scale(1.2); }
-        }
-        .live-text {
-            font-weight: 700;
-            font-size: 12px;
-        }
-        .datetime-show {
-            font-size: 12px;
+            50% { opacity: 0.3; }
         }
         .navbar {
             background: #1a1a2e;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            padding: 15px 0;
         }
         .navbar .container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
             flex-wrap: wrap;
             gap: 15px;
         }
-        .nav-brand a {
-            text-decoration: none;
+        .logo {
             font-size: 24px;
             font-weight: 800;
             color: #c0392b;
+            text-decoration: none;
         }
-        .nav-menu ul {
+        .nav-links {
             display: flex;
+            gap: 15px;
             list-style: none;
-            gap: 5px;
             flex-wrap: wrap;
         }
-        .nav-menu ul li a {
-            text-decoration: none;
-            padding: 8px 16px;
+        .nav-links a {
             color: white;
-            font-weight: 600;
-            font-size: 13px;
-            transition: all 0.3s;
-        }
-        .nav-menu ul li a:hover {
-            color: #c0392b;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
         }
         .hero {
-            padding: 30px 0;
+            padding: 40px 0;
         }
         .hero-grid {
             display: grid;
@@ -110,37 +90,32 @@
             position: relative;
             border-radius: 12px;
             overflow: hidden;
-            height: 450px;
+            height: 400px;
         }
         .hero-main img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-        .hero-content {
+        .hero-overlay {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
             background: linear-gradient(transparent, rgba(0,0,0,0.9));
-            padding: 30px;
+            padding: 25px;
             color: white;
         }
-        .hero-category {
+        .hero-cat {
             background: #c0392b;
             padding: 4px 12px;
             border-radius: 4px;
             font-size: 11px;
-            font-weight: 700;
             display: inline-block;
         }
-        .hero-content h2 {
-            font-size: 28px;
+        .hero-title {
+            font-size: 24px;
             margin: 12px 0;
-        }
-        .hero-content h2 a {
-            color: white;
-            text-decoration: none;
         }
         .hero-side {
             display: flex;
@@ -149,24 +124,11 @@
         }
         .hero-side-item {
             background: white;
+            padding: 15px;
             border-radius: 10px;
-            padding: 18px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-        .hero-side-item:hover {
-            transform: translateX(5px);
-            border-left: 3px solid #c0392b;
-        }
-        .hero-side-item h3 {
-            margin: 10px 0;
-            font-size: 18px;
-        }
-        .hero-side-item h3 a {
-            text-decoration: none;
-            color: #1a1a2e;
-        }
-        .main-content {
+        .main {
             padding: 40px 0;
         }
         .content-grid {
@@ -174,38 +136,11 @@
             grid-template-columns: 2fr 1fr;
             gap: 40px;
         }
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 12px;
-            border-bottom: 3px solid #c0392b;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .section-header h2 {
+        .section-title {
             font-size: 20px;
-            font-weight: 700;
-        }
-        .filter-buttons {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .filter-btn {
-            padding: 5px 14px;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.3s;
-        }
-        .filter-btn.active, .filter-btn:hover {
-            background: #c0392b;
-            color: white;
-            border-color: #c0392b;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #c0392b;
         }
         .news-grid {
             display: grid;
@@ -216,154 +151,56 @@
             background: white;
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
         }
         .news-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
         }
         .news-card img {
             width: 100%;
-            height: 220px;
+            height: 200px;
             object-fit: cover;
         }
         .news-card-content {
             padding: 18px;
         }
-        .news-category {
-            display: inline-block;
+        .news-cat {
             background: #c0392b;
             color: white;
             padding: 3px 10px;
             border-radius: 4px;
             font-size: 10px;
+            display: inline-block;
             margin-bottom: 10px;
         }
-        .news-card-content h3 {
+        .news-title {
             font-size: 18px;
             margin-bottom: 10px;
-            line-height: 1.4;
-        }
-        .news-card-content h3 a {
-            text-decoration: none;
-            color: #1a1a2e;
-        }
-        .news-meta {
-            color: #666;
-            font-size: 11px;
-            margin: 10px 0;
-            display: flex;
-            gap: 15px;
-        }
-        .load-more {
-            text-align: center;
-            margin-top: 40px;
-        }
-        #loadMoreBtn {
-            padding: 12px 35px;
-            background: white;
-            border: 2px solid #c0392b;
-            color: #c0392b;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: 700;
-            transition: all 0.3s;
-        }
-        #loadMoreBtn:hover {
-            background: #c0392b;
-            color: white;
-        }
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
         }
         .widget {
             background: white;
+            padding: 20px;
             border-radius: 10px;
-            padding: 22px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
         }
-        .widget h3 {
+        .widget-title {
             font-size: 16px;
-            margin-bottom: 18px;
-            padding-bottom: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
             border-bottom: 2px solid #c0392b;
         }
-        .trending-widget ul li, .categories-widget ul li {
-            padding: 10px 0;
-            border-bottom: 1px solid #f0f0f0;
+        .trending-list {
             list-style: none;
         }
-        .trending-widget ul li a {
-            text-decoration: none;
-            color: #1a1a2e;
-            transition: all 0.3s;
-        }
-        .trending-widget ul li a:hover {
-            color: #c0392b;
-        }
-        .categories-widget ul li a {
-            text-decoration: none;
-            color: #1a1a2e;
-            display: flex;
-            justify-content: space-between;
-            transition: all 0.3s;
-        }
-        .categories-widget ul li a:hover {
-            color: #c0392b;
-        }
-        .categories-widget ul li span {
-            color: #666;
-            font-size: 12px;
-        }
-        .newsletter-widget input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            margin: 10px 0;
-        }
-        .newsletter-widget button {
-            width: 100%;
-            padding: 10px;
-            background: #c0392b;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .newsletter-widget button:hover {
-            background: #a93226;
-        }
-        .social-links {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .social-links a {
-            width: 38px;
-            height: 38px;
-            background: #f4f6f9;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            color: #c0392b;
-            transition: all 0.3s;
-        }
-        .social-links a:hover {
-            background: #c0392b;
-            color: white;
-            transform: scale(1.1);
+        .trending-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
         }
         .footer {
             background: #1a1a2e;
             color: #ccc;
-            padding: 50px 0 20px;
+            padding: 40px 0 20px;
             margin-top: 50px;
         }
         .footer-grid {
@@ -372,199 +209,129 @@
             gap: 40px;
             margin-bottom: 30px;
         }
-        .footer-about h3 {
-            color: white;
-            margin-bottom: 15px;
-            font-size: 20px;
-        }
-        .footer-about p {
-            font-size: 13px;
-            line-height: 1.6;
-        }
-        .footer-links h4, .footer-contact h4 {
-            color: white;
-            margin-bottom: 18px;
-            font-size: 16px;
-        }
-        .footer-links ul {
-            list-style: none;
-        }
-        .footer-links ul li {
-            margin-bottom: 10px;
-        }
-        .footer-links ul li a {
-            text-decoration: none;
-            color: #ccc;
-            transition: all 0.3s;
-            font-size: 13px;
-        }
-        .footer-links ul li a:hover {
-            color: #c0392b;
-        }
-        .footer-contact p {
-            margin-bottom: 10px;
-            font-size: 13px;
-        }
-        .footer-contact p i {
-            width: 25px;
-            color: #c0392b;
-        }
         .footer-bottom {
             text-align: center;
             padding-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            font-size: 12px;
+            border-top: 1px solid #333;
         }
-        @media (max-width: 992px) {
-            .content-grid, .hero-grid, .footer-grid {
-                grid-template-columns: 1fr;
-            }
-            .news-grid {
-                grid-template-columns: 1fr;
-            }
-            .nav-menu {
-                display: none;
-            }
+        .social-icons {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .social-icons a {
+            color: white;
+            background: #333;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
         }
         @media (max-width: 768px) {
+            .hero-grid, .content-grid, .news-grid, .footer-grid {
+                grid-template-columns: 1fr;
+            }
             .hero-main {
                 height: 300px;
             }
-            .hero-content {
-                padding: 20px;
-            }
-            .hero-content h2 {
-                font-size: 20px;
-            }
-            .section-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .filter-buttons {
-                width: 100%;
-                overflow-x: auto;
-                padding-bottom: 5px;
-            }
-            .news-card img {
-                height: 180px;
+            .nav-links {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
 
-<div class="live-tv-bar">
+<div class="top-bar">
     <div class="container">
-        <div class="live-indicator">
+        <div class="live">
             <span class="live-dot"></span>
-            <span class="live-text">LIVE</span>
+            <span>LIVE</span>
         </div>
-        <div class="datetime-show" id="currentDateTime"></div>
+        <div id="datetime"></div>
     </div>
 </div>
 
 <nav class="navbar">
     <div class="container">
-        <div class="nav-brand">
-            <a href="index.html">🌍 THE FARHAN WORLD</a>
-        </div>
-        <div class="nav-menu">
-            <ul>
-                <li><a href="index.html">HOME</a></li>
-                <li><a href="#">WORLD</a></li>
-                <li><a href="#">POLITICS</a></li>
-                <li><a href="#">BUSINESS</a></li>
-                <li><a href="#">TECHNOLOGY</a></li>
-                <li><a href="#">SPORTS</a></li>
-                <li><a href="#">ENTERTAINMENT</a></li>
-            </ul>
-        </div>
+        <a href="index.html" class="logo">🌍 THE FARHAN WORLD</a>
+        <ul class="nav-links">
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="#">WORLD</a></li>
+            <li><a href="#">POLITICS</a></li>
+            <li><a href="#">BUSINESS</a></li>
+            <li><a href="#">TECH</a></li>
+            <li><a href="#">SPORTS</a></li>
+        </ul>
     </div>
 </nav>
 
 <section class="hero">
     <div class="container">
-        <div class="hero-grid" id="heroGrid">Loading...</div>
+        <div class="hero-grid" id="heroGrid">
+            <div style="grid-column:1/-1; text-align:center; padding:50px;">Loading...</div>
+        </div>
     </div>
 </section>
 
-<main class="main-content">
+<section class="main">
     <div class="container">
         <div class="content-grid">
-            <div class="latest-news">
-                <div class="section-header">
-                    <h2>📰 LATEST NEWS</h2>
-                    <div class="filter-buttons">
-                        <button class="filter-btn active" data-filter="all">ALL</button>
-                        <button class="filter-btn" data-filter="world">WORLD</button>
-                        <button class="filter-btn" data-filter="politics">POLITICS</button>
-                        <button class="filter-btn" data-filter="business">BUSINESS</button>
-                        <button class="filter-btn" data-filter="technology">TECH</button>
-                        <button class="filter-btn" data-filter="sports">SPORTS</button>
-                    </div>
-                </div>
+            <div>
+                <h2 class="section-title">📰 LATEST NEWS</h2>
                 <div class="news-grid" id="newsGrid">Loading posts...</div>
-                <div class="load-more">
-                    <button id="loadMoreBtn">LOAD MORE ↓</button>
-                </div>
             </div>
-            
-            <aside class="sidebar">
-                <div class="widget trending-widget">
-                    <h3>🔥 TRENDING NOW</h3>
-                    <ul id="trendingList">Loading...</ul>
+            <aside>
+                <div class="widget">
+                    <h3 class="widget-title">🔥 TRENDING</h3>
+                    <ul class="trending-list" id="trendingList">Loading...</ul>
                 </div>
-                <div class="widget categories-widget">
-                    <h3>📁 CATEGORIES</h3>
-                    <ul>
-                        <li><a href="#">World News <span id="worldCount">0</span></a></li>
-                        <li><a href="#">Politics <span id="politicsCount">0</span></a></li>
-                        <li><a href="#">Business <span id="businessCount">0</span></a></li>
-                        <li><a href="#">Technology <span id="techCount">0</span></a></li>
-                        <li><a href="#">Sports <span id="sportsCount">0</span></a></li>
-                        <li><a href="#">Entertainment <span id="entertainmentCount">0</span></a></li>
-                    </ul>
+                <div class="widget">
+                    <h3 class="widget-title">📁 CATEGORIES</h3>
+                    <ul class="trending-list" id="categoryList"></ul>
                 </div>
-                <div class="widget newsletter-widget">
-                    <h3>📧 NEWSLETTER</h3>
-                    <p>Get latest updates straight to your inbox</p>
+                <div class="widget">
+                    <h3 class="widget-title">📧 NEWSLETTER</h3>
                     <form id="newsletterForm">
-                        <input type="email" placeholder="Your email address" required>
-                        <button type="submit">SUBSCRIBE</button>
+                        <input type="email" placeholder="Your email" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:5px;">
+                        <button type="submit" style="width:100%; padding:10px; background:#c0392b; color:white; border:none; border-radius:5px; cursor:pointer;">SUBSCRIBE</button>
                     </form>
                 </div>
-                <div class="widget social-widget">
-                    <h3>🔗 FOLLOW US</h3>
-                    <div class="social-links" id="socialLinks"></div>
+                <div class="widget">
+                    <h3 class="widget-title">🔗 FOLLOW US</h3>
+                    <div class="social-icons" id="socialIcons"></div>
                 </div>
             </aside>
         </div>
     </div>
-</main>
+</section>
 
 <footer class="footer">
     <div class="container">
         <div class="footer-grid">
-            <div class="footer-about">
+            <div>
                 <h3>THE FARHAN WORLD</h3>
-                <p>Your trusted source for accurate, fast, and comprehensive news coverage from around the globe.</p>
+                <p>Your trusted source for news from around the globe.</p>
             </div>
-            <div class="footer-links">
+            <div>
                 <h4>QUICK LINKS</h4>
-                <ul>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
+                <ul style="list-style:none;">
+                    <li><a href="#" style="color:#ccc;">About Us</a></li>
+                    <li><a href="#" style="color:#ccc;">Contact</a></li>
+                    <li><a href="#" style="color:#ccc;">Privacy Policy</a></li>
                 </ul>
             </div>
-            <div class="footer-contact">
-                <h4>CONTACT INFO</h4>
-                <p><i class="fas fa-envelope"></i> info@thefarhanworld.com</p>
-                <p><i class="fas fa-phone"></i> +880 1234 567890</p>
+            <div>
+                <h4>CONTACT</h4>
+                <p>info@thefarhanworld.com</p>
+                <p>+880 1234 567890</p>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 THE FARHAN WORLD. All Rights Reserved.</p>
+            <p>&copy; 2026 THE FARHAN WORLD. All rights reserved.</p>
         </div>
     </div>
 </footer>
@@ -573,203 +340,109 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script>
-    let allPosts = [];
-    let currentPage = 0;
-    const postsPerPage = 6;
+    // DateTime
+    function updateDateTime() {
+        const now = new Date();
+        document.getElementById('datetime').innerHTML = now.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
 
-    function loadSocialLinks() {
+    // Social icons
+    function loadSocialIcons() {
         const links = getSocialLinks();
-        const socialContainer = document.getElementById('socialLinks');
-        const socialIcons = [
-            { name: 'facebook', icon: 'fab fa-facebook-f', color: '#1877f2' },
-            { name: 'instagram', icon: 'fab fa-instagram', color: '#e4405f' },
-            { name: 'twitter', icon: 'fab fa-twitter', color: '#1da1f2' },
-            { name: 'whatsapp', icon: 'fab fa-whatsapp', color: '#25d366' },
-            { name: 'youtube', icon: 'fab fa-youtube', color: '#ff0000' }
+        const icons = [
+            { name: 'facebook', icon: 'fab fa-facebook-f' },
+            { name: 'instagram', icon: 'fab fa-instagram' },
+            { name: 'twitter', icon: 'fab fa-twitter' },
+            { name: 'youtube', icon: 'fab fa-youtube' }
         ];
-        
         let html = '';
-        socialIcons.forEach(icon => {
+        icons.forEach(icon => {
             if (links[icon.name]) {
-                html += `<a href="${links[icon.name]}" target="_blank" style="background:${icon.color}; color:white;"><i class="${icon.icon}"></i></a>`;
+                html += `<a href="${links[icon.name]}" target="_blank"><i class="${icon.icon}"></i></a>`;
             }
         });
-        
-        if (html === '') {
-            html = '<a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i class="fab fa-twitter"></i></a><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-youtube"></i></a>';
-        }
-        socialContainer.innerHTML = html;
+        document.getElementById('socialIcons').innerHTML = html || 'Coming soon';
     }
 
-    function updateDateTime() {
-        const dtElem = document.getElementById('currentDateTime');
-        if (dtElem) {
-            const now = new Date();
-            dtElem.innerHTML = now.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-        }
-    }
-
-    async function loadHeroPosts() {
-        try {
-            const posts = await getPublishedPosts();
-            const heroGrid = document.getElementById('heroGrid');
-            
-            if (posts.length === 0) {
-                heroGrid.innerHTML = '<div class="hero-main"><img src="https://picsum.photos/800/500" alt="News"><div class="hero-content"><span class="hero-category">WELCOME</span><h2>Welcome to The Farhan World</h2><p>Your trusted source for latest news</p></div></div><div class="hero-side"><div class="hero-side-item"><span class="hero-category">NEWS</span><h3>Stay tuned for updates</h3><small>Latest news coming soon</small></div></div>';
-                return;
-            }
-            
-            const mainPost = posts[0];
-            const sidePosts = posts.slice(1, 3);
-            
-            heroGrid.innerHTML = `
-                <div class="hero-main">
-                    <img src="${mainPost.image || 'https://picsum.photos/800/500'}" alt="${mainPost.headline}">
-                    <div class="hero-content">
-                        <span class="hero-category">${mainPost.category.toUpperCase()}</span>
-                        <h2><a href="#">${mainPost.headline}</a></h2>
-                        <p>${(mainPost.excerpt || '').substring(0, 120)}...</p>
-                    </div>
-                </div>
-                <div class="hero-side">
-                    ${sidePosts.map(post => `
-                        <div class="hero-side-item">
-                            <span class="hero-category">${post.category}</span>
-                            <h3><a href="#">${post.headline}</a></h3>
-                            <small>${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString() : 'New'}</small>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        } catch (error) {
-            console.error('Error loading hero:', error);
-            document.getElementById('heroGrid').innerHTML = '<div style="grid-column:1/-1; text-align:center;">Error loading posts</div>';
-        }
-    }
-
-    async function loadLatestNews() {
-        try {
-            allPosts = await getPublishedPosts();
-            displayPosts(allPosts.slice(0, postsPerPage));
-        } catch (error) {
-            console.error('Error loading news:', error);
-            document.getElementById('newsGrid').innerHTML = '<div style="grid-column:1/-1; text-align:center;">Error loading posts</div>';
-        }
-    }
-
-    function displayPosts(posts) {
-        const newsGrid = document.getElementById('newsGrid');
-        
+    // Load hero posts
+    async function loadHero() {
+        const posts = await getPosts();
+        const heroGrid = document.getElementById('heroGrid');
         if (posts.length === 0) {
-            newsGrid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:60px 20px;"><i class="fas fa-newspaper" style="font-size:48px; color:#c0392b; margin-bottom:20px; display:block;"></i><h3 style="margin-bottom:10px;">No posts yet</h3><p style="color:#666;">Check back later for updates</p></div>';
+            heroGrid.innerHTML = '<div class="hero-main"><img src="https://picsum.photos/800/400"><div class="hero-overlay"><span class="hero-cat">WELCOME</span><h2 class="hero-title">The Farhan World</h2><p>Your trusted news source</p></div></div><div class="hero-side"><div class="hero-side-item"><h3>Latest news coming soon</h3></div></div>';
             return;
         }
-        
+        const main = posts[0];
+        const side = posts.slice(1, 3);
+        heroGrid.innerHTML = `
+            <div class="hero-main">
+                <img src="${main.image || 'https://picsum.photos/800/400'}" alt="${main.headline}">
+                <div class="hero-overlay">
+                    <span class="hero-cat">${main.category}</span>
+                    <h2 class="hero-title">${main.headline}</h2>
+                    <p>${(main.excerpt || '').substring(0, 100)}...</p>
+                </div>
+            </div>
+            <div class="hero-side">
+                ${side.map(p => `<div class="hero-side-item"><h3>${p.headline}</h3><small>${p.createdAt ? new Date(p.createdAt.toDate()).toLocaleDateString() : 'New'}</small></div>`).join('')}
+            </div>
+        `;
+    }
+
+    // Load latest news
+    async function loadNews() {
+        const posts = await getPosts();
+        const newsGrid = document.getElementById('newsGrid');
+        if (posts.length === 0) {
+            newsGrid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:50px;">No posts yet. Check back soon!</div>';
+            return;
+        }
         newsGrid.innerHTML = posts.map(post => `
             <div class="news-card">
                 <img src="${post.image || 'https://picsum.photos/400/250'}" alt="${post.headline}">
                 <div class="news-card-content">
-                    <span class="news-category">${post.category}</span>
-                    <h3><a href="#">${post.headline}</a></h3>
-                    <div class="news-meta">
-                        <span><i class="fas fa-calendar"></i> ${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString() : 'New'}</span>
-                        <span><i class="fas fa-eye"></i> ${post.views || 0} views</span>
-                    </div>
-                    <p>${(post.excerpt || '').substring(0, 100)}...</p>
+                    <span class="news-cat">${post.category}</span>
+                    <h3 class="news-title">${post.headline}</h3>
+                    <small>${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString() : 'New'}</small>
+                    <p>${(post.excerpt || '').substring(0, 80)}...</p>
                 </div>
             </div>
         `).join('');
     }
 
+    // Load trending
     async function loadTrending() {
-        try {
-            const trending = await getTrendingPosts(5);
-            const trendingList = document.getElementById('trendingList');
-            if (trending.length === 0) {
-                trendingList.innerHTML = '<li>No trending posts</li>';
-            } else {
-                trendingList.innerHTML = trending.map(post => `
-                    <li><a href="#">🔥 ${post.headline}</a></li>
-                `).join('');
-            }
-        } catch (error) {
-            console.error('Error loading trending:', error);
-        }
+        const posts = await getPosts();
+        const trending = [...posts].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5);
+        const trendingList = document.getElementById('trendingList');
+        trendingList.innerHTML = trending.map(p => `<li>🔥 ${p.headline}</li>`).join('');
+        if (trending.length === 0) trendingList.innerHTML = '<li>No trending posts</li>';
     }
 
-    async function updateCategoryCounts() {
-        try {
-            const counts = await getCategoryCounts();
-            document.getElementById('worldCount').textContent = counts.world;
-            document.getElementById('politicsCount').textContent = counts.politics;
-            document.getElementById('businessCount').textContent = counts.business;
-            document.getElementById('techCount').textContent = counts.technology;
-            document.getElementById('sportsCount').textContent = counts.sports;
-            document.getElementById('entertainmentCount').textContent = counts.entertainment;
-        } catch (error) {
-            console.error('Error updating counts:', error);
-        }
+    // Load categories
+    async function loadCategories() {
+        const posts = await getPosts();
+        const cats = { world: 0, politics: 0, business: 0, technology: 0, sports: 0, entertainment: 0 };
+        posts.forEach(p => { if (cats[p.category] !== undefined) cats[p.category]++; });
+        const catList = document.getElementById('categoryList');
+        catList.innerHTML = Object.entries(cats).map(([k, v]) => `<li>${k.toUpperCase()} <span style="float:right;">${v}</span></li>`).join('');
     }
 
-    async function filterPosts(category) {
-        const filtered = category === 'all' ? allPosts : allPosts.filter(p => p.category === category);
-        displayPosts(filtered);
-    }
-
-    document.getElementById('loadMoreBtn').addEventListener('click', () => {
-        currentPage++;
-        const start = currentPage * postsPerPage;
-        const newPosts = allPosts.slice(start, start + postsPerPage);
-        if (newPosts.length > 0) {
-            const newsGrid = document.getElementById('newsGrid');
-            newPosts.forEach(post => {
-                newsGrid.innerHTML += `
-                    <div class="news-card">
-                        <img src="${post.image || 'https://picsum.photos/400/250'}" alt="${post.headline}">
-                        <div class="news-card-content">
-                            <span class="news-category">${post.category}</span>
-                            <h3><a href="#">${post.headline}</a></h3>
-                            <div class="news-meta">${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString() : 'New'}</div>
-                            <p>${(post.excerpt || '').substring(0, 100)}...</p>
-                        </div>
-                    </div>
-                `;
-            });
-        } else {
-            document.getElementById('loadMoreBtn').style.display = 'none';
-        }
+    // Newsletter
+    document.getElementById('newsletterForm')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        alert('Thank you for subscribing!');
+        e.target.reset();
     });
 
-    document.addEventListener('DOMContentLoaded', async () => {
-        updateDateTime();
-        setInterval(updateDateTime, 1000);
-        
-        loadSocialLinks();
-        await loadHeroPosts();
-        await loadLatestNews();
-        await loadTrending();
-        await updateCategoryCounts();
-        
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', async () => {
-                filterBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                const filter = btn.dataset.filter;
-                if (filter === 'all') {
-                    await loadLatestNews();
-                } else {
-                    await filterPosts(filter);
-                }
-            });
-        });
-        
-        document.getElementById('newsletterForm')?.addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Thank you for subscribing!');
-            e.target.reset();
-        });
-    });
+    // Initialize
+    loadSocialIcons();
+    loadHero();
+    loadNews();
+    loadTrending();
+    loadCategories();
 </script>
 </body>
 </html>
