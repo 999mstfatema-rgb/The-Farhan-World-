@@ -132,9 +132,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="firebase-config.js"></script>
     <script>
-        // Clear session storage
-        sessionStorage.clear();
-        
         // Check if already logged in
         if (localStorage.getItem('admin_logged_in') === 'true') {
             window.location.href = 'dashboard.html';
@@ -176,8 +173,10 @@
             loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
             
             try {
-                // Simple credential check (hardcoded for now)
-                if (email === '999farhanislam@gmail.com' && password === 'farhan123') {
+                // REAL FIREBASE AUTHENTICATION
+                const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+                
+                if (userCredential.user) {
                     localStorage.setItem('admin_logged_in', 'true');
                     if (remember) {
                         localStorage.setItem('admin_remembered', 'true');
@@ -193,7 +192,14 @@
                     isLoggingIn = false;
                 }
             } catch (error) {
-                showMessage('Login failed: ' + error.message, 'error');
+                console.error('Login error:', error);
+                let errorMsg = 'Invalid email or password';
+                if (error.code === 'auth/user-not-found') {
+                    errorMsg = 'User not found. Please check email.';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMsg = 'Wrong password. Please try again.';
+                }
+                showMessage(errorMsg, 'error');
                 loginBtn.disabled = false;
                 loginBtn.innerHTML = 'Login';
                 isLoggingIn = false;
