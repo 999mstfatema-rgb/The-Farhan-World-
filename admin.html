@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - The Farhan World</title>
+    <title>Admin Panel</title>
     <style>
         * {
             margin: 0;
@@ -11,145 +11,257 @@
             box-sizing: border-box;
         }
         body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             padding: 20px;
         }
-        .login-container {
-            width: 100%;
-            max-width: 400px;
-        }
-        .login-card {
+        .admin-box {
             background: white;
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        .login-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .login-header .logo {
-            font-size: 48px;
-            color: #c0392b;
-        }
-        .login-header h2 {
-            margin: 10px 0;
-            color: #1a1a2e;
-        }
-        .input-group {
-            margin-bottom: 20px;
-        }
-        .input-group input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e0e0e0;
+            padding: 30px;
             border-radius: 10px;
-            font-size: 16px;
+            width: 500px;
+            max-width: 100%;
         }
-        .input-group input:focus {
-            border-color: #c0392b;
-            outline: none;
-        }
-        .login-btn {
+        input, textarea, select {
             width: 100%;
-            padding: 14px;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
             background: #c0392b;
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
+            border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
+            margin-top: 5px;
         }
-        .login-btn:hover {
-            background: #a93226;
+        .logout {
+            background: #555;
+            margin-top: 10px;
         }
-        .message {
+        .post-list {
             margin-top: 20px;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            display: none;
-            text-align: center;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            max-height: 300px;
+            overflow-y: auto;
         }
-        .message.error {
-            background: #ffebee;
+        .post-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            width: auto;
+        }
+        h3, h4 {
+            margin: 15px 0 10px 0;
+        }
+        .error-msg {
             color: #c0392b;
-            display: block;
+            background: #ffebee;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: none;
         }
-        .login-footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 12px;
-            color: #999;
+        .success-msg {
+            color: #27ae60;
+            background: #e8f5e9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-card">
-            <div class="login-header">
-                <div class="logo">🌍</div>
-                <h2>The Farhan World</h2>
-                <p>Admin Panel</p>
-            </div>
-            <div id="messageBox" class="message"></div>
-            <form id="loginForm">
-                <div class="input-group">
-                    <input type="email" id="email" placeholder="Email Address" required>
-                </div>
-                <div class="input-group">
-                    <input type="password" id="password" placeholder="Password" required>
-                </div>
-                <button type="submit" class="login-btn">Login</button>
-            </form>
-            <div class="login-footer">
-                Secure Admin Access
-            </div>
+    <div class="admin-box">
+        <h2>🌍 The Farhan World - Admin</h2>
+        
+        <div id="errorMsg" class="error-msg"></div>
+        <div id="successMsg" class="success-msg"></div>
+
+        <div id="loginSection">
+            <input type="email" id="loginEmail" placeholder="Email Address">
+            <input type="password" id="loginPassword" placeholder="Password">
+            <button onclick="login()">Login</button>
+        </div>
+
+        <div id="adminSection" style="display:none;">
+            <h3>📝 Create New Post</h3>
+            <input type="text" id="headline" placeholder="Headline">
+            <input type="text" id="title" placeholder="Subtitle">
+            <select id="category">
+                <option value="world">World</option>
+                <option value="politics">Politics</option>
+                <option value="business">Business</option>
+                <option value="technology">Technology</option>
+                <option value="sports">Sports</option>
+                <option value="entertainment">Entertainment</option>
+            </select>
+            <input type="text" id="image" placeholder="Image URL" value="https://picsum.photos/800/500">
+            <textarea id="excerpt" rows="2" placeholder="Short description"></textarea>
+            <textarea id="content" rows="5" placeholder="Full content"></textarea>
+            <input type="text" id="tags" placeholder="Tags (comma separated)">
+            <button onclick="createPost()">📌 Publish Post</button>
+            <button class="logout" onclick="logout()">🚪 Logout</button>
+            
+            <h4>📋 Your Posts</h4>
+            <div class="post-list" id="postList">Loading...</div>
         </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="firebase-config.js"></script>
     <script>
-        if (localStorage.getItem('admin_logged_in') === 'true') {
-            window.location.href = 'dashboard.html';
+        const firebaseConfig = {
+            apiKey: "AIzaSyAOKSPMSNaFP167R-uWtvwVegH3exOViRQ",
+            authDomain: "the-farhan-world.firebaseapp.com",
+            projectId: "the-farhan-world",
+            storageBucket: "the-farhan-world.firebasestorage.app",
+            messagingSenderId: "753468735885",
+            appId: "1:753468735885:web:9081e32ea3efdb2033fdc4"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        function showError(msg) {
+            const errorDiv = document.getElementById('errorMsg');
+            errorDiv.textContent = msg;
+            errorDiv.style.display = 'block';
+            setTimeout(() => errorDiv.style.display = 'none', 4000);
         }
-        
-        const form = document.getElementById('loginForm');
-        const messageBox = document.getElementById('messageBox');
-        
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
+
+        function showSuccess(msg) {
+            const successDiv = document.getElementById('successMsg');
+            successDiv.textContent = msg;
+            successDiv.style.display = 'block';
+            setTimeout(() => successDiv.style.display = 'none', 3000);
+        }
+
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
             
             if (!email || !password) {
-                messageBox.textContent = 'Please enter email and password';
-                messageBox.className = 'message error';
+                showError('Please enter email and password');
                 return;
             }
             
-            const loginBtn = document.querySelector('.login-btn');
-            loginBtn.disabled = true;
-            loginBtn.textContent = 'Logging in...';
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('adminSection').style.display = 'block';
+                loadPosts();
+                showSuccess('Login successful!');
+            } catch (error) {
+                showError('Login failed: ' + error.message);
+            }
+        }
+
+        function logout() {
+            auth.signOut().then(() => {
+                document.getElementById('loginSection').style.display = 'block';
+                document.getElementById('adminSection').style.display = 'none';
+                showSuccess('Logged out');
+            });
+        }
+
+        async function createPost() {
+            const headline = document.getElementById('headline').value.trim();
+            if (!headline) {
+                showError('Please enter a headline');
+                return;
+            }
+            
+            const post = {
+                headline: headline,
+                title: document.getElementById('title').value,
+                category: document.getElementById('category').value,
+                image: document.getElementById('image').value || 'https://picsum.photos/800/500',
+                excerpt: document.getElementById('excerpt').value,
+                content: document.getElementById('content').value,
+                tags: document.getElementById('tags').value.split(',').map(t => t.trim()).filter(t => t),
+                status: 'published',
+                createdAt: new Date(),
+                views: 0
+            };
             
             try {
-                await firebase.auth().signInWithEmailAndPassword(email, password);
-                localStorage.setItem('admin_logged_in', 'true');
-                window.location.href = 'dashboard.html';
+                await db.collection('posts').add(post);
+                showSuccess('Post created successfully!');
+                document.getElementById('headline').value = '';
+                document.getElementById('title').value = '';
+                document.getElementById('excerpt').value = '';
+                document.getElementById('content').value = '';
+                document.getElementById('tags').value = '';
+                loadPosts();
             } catch (error) {
-                messageBox.textContent = 'Invalid email or password';
-                messageBox.className = 'message error';
-                loginBtn.disabled = false;
-                loginBtn.textContent = 'Login';
+                console.error('Error creating post:', error);
+                showError('Error creating post: ' + error.message);
+            }
+        }
+
+        async function loadPosts() {
+            try {
+                const snapshot = await db.collection('posts').orderBy('createdAt', 'desc').get();
+                const posts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                const container = document.getElementById('postList');
+                if (posts.length === 0) {
+                    container.innerHTML = 'No posts yet. Create one above!';
+                } else {
+                    container.innerHTML = posts.map(post => `
+                        <div class="post-item">
+                            <span><strong>${post.headline}</strong><br><small>${post.category} | ${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString() : 'New'}</small></span>
+                            <button class="delete-btn" onclick="deletePost('${post.id}')">Delete</button>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading posts:', error);
+                document.getElementById('postList').innerHTML = 'Error loading posts';
+            }
+        }
+
+        async function deletePost(id) {
+            if (confirm('Delete this post?')) {
+                try {
+                    await db.collection('posts').doc(id).delete();
+                    loadPosts();
+                    showSuccess('Post deleted!');
+                } catch (error) {
+                    showError('Error deleting post');
+                }
+            }
+        }
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('adminSection').style.display = 'block';
+                loadPosts();
             }
         });
     </script>
