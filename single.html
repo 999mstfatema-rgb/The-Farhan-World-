@@ -138,7 +138,7 @@
             }
 
             try {
-                const doc = await db.collection('posts').doc(postId).get();
+                const doc = await db.collection('/posts/8Pphf9CTm92jRDOQ0GMr').doc(postId).get();
                 
                 if (doc.exists) {
                     const post = doc.data();
@@ -163,7 +163,7 @@
                     `;
                     
                     // Update view count
-                    await db.collection('posts').doc(postId).update({
+                    await db.collection('/posts/8Pphf9CTm92jRDOQ0GMr').doc(postId).update({
                         views: (post.views || 0) + 1
                     });
                 } else {
